@@ -1,0 +1,20 @@
+#ui
+{
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#tools
+{
+    /* Handled by jQuery UI */
+}
+
+#userInfo
+{
+    float: left;
+}
+#tools
+{
+    float: right;
+}
