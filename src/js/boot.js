@@ -1,15 +1,8 @@
+// Boot.js
+// does all of the things... on boot
+//
 (function ($) {
     $(function () {
-        var canvas = document.getElementById('theCanvas');
-        var context = canvas.getContext('2d');
-
-        App.load(canvas, context);
-        
-        canvas.addEventListener('mousedown', App.handleMouseDown, false);
-        canvas.addEventListener('mousemove', App.handleMouseMove, false);
-        
-        App.draw();
-        
-        $('#build').trigger('click');
+        require(["/modules/engine.game"]);
     });
 })(jQuery);
