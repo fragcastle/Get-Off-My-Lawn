@@ -1,6 +1,6 @@
 require(
-    ["modules/engine.map", "modules/engine.events", "modules/engine.game", "modules/engine.debug",],
-    function(mapEngine, eventEngine, gameEngine, debugEngine) {
+    ["modules/engine.map", "modules/engine.events", "modules/engine.game", "modules/loader.assets", "modules/engine.debug",],
+    function(mapEngine, eventEngine, gameEngine, assetLoader, debugEngine) {
         var _tree = null;
             _treePositions = null;
         
@@ -39,7 +39,7 @@ require(
             var canvas  = gameEngine.getCanvas();
 
             // Generate the position of the trees
-            _tree = createImage('images/tree.png');
+            _tree = assetLoader.getAsset("images/tree.png");
             _treePositions = randomNumbers( mapEngine.getCurrentMap().treeFactor * 100 );
         });
         
