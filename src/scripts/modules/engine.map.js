@@ -55,6 +55,7 @@ define(
         },
         setCurrentLevel: function(name) {
             _currentMap = maps[name] || _currentMap;
+            eventEngine.pub(this.events.LEVEL_LOADED);
             return this; // for chaining
         },
         getDataIndex: function( pos ) {
@@ -88,22 +89,23 @@ define(
             for(var index = -1, len = _currentMap.data.length; ++index < len; ) {
                 var row     = index < _currentMap.width ? 0 : Math.floor(index/_currentMap.width),
                     col     = Math.floor(index%_currentMap.width);
-
+                
                 fn.call(this, row, col, index);
             }
         },
         renderTo: function(canvas, context) {
             context.clearRect (0, 0, canvas.width, canvas.height);
             var X, Y;
-            this.tileLoop(function(row, col, index){
+            
+            this.tileLoop(function(row, col, index) {
                 var img     = this.getTileImage(index),
                     pos     = this.translatePosition( row, col, img, canvas );
 
                 context.drawImage(img, pos.x, pos.y, img.width, img.height);
-                eventEngine.pub(this.events.TILE_DRAW, this, [img, pos]);
+                eventEngine.pub(this.events.TILE_DRAW, this, [index, row, col, pos]);
                 // TODO: tree builder should sub to TILE_DRAW to render trees
             });
-
+            
             eventEngine.pub(this.events.LOAD_COMPLETE);
         },
         tileTypes: {
@@ -126,7 +128,8 @@ define(
         },
         events: {
             LOAD_COMPLETE: "loadDone",
-            TILE_DRAW: "tileDraw"
+            TILE_DRAW: "tileDraw",
+            LEVEL_LOADED: "levelLoaded"
         }
     };
 });

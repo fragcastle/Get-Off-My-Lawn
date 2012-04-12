@@ -19,7 +19,7 @@ require(
         "modules/builder.home",
         "modules/builder.trees"
     ],
-    function($, mapEngine, eventEngine, configEngine, assetLoader, gameEngine) {
+    function($, mapEngine, eventEngine, configEngine, assetLoader, gameEngine, debugEngine) {
         configEngine.set("shouldDebug", true);
 
         // create a list of the assets we want to load
