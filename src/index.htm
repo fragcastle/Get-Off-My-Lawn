@@ -10,48 +10,21 @@
         <meta name="apple-mobile-web-app-capable" content="yes" />
 
         <!-- iPhone homescreen icon -->
-        <link rel="apple-touch-icon" href="../images/touristResortIcon.png" /> 
+        <link rel="apple-touch-icon" href="../images/touristResortIcon.png" />
         <link rel="apple-touch-icon-precomposed" href="../images/touristResortIcon.png"/>
 
         <!-- Chrome Frame -->
         <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-        
-        <title></title>
-        <link rel="stylesheet" type="text/css" href="css/main.css" />
-        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.16.custom.css" />
+
+        <title>Get off my lawn!</title>
+
+        <link rel="stylesheet" href="css/app.css" />
+    </head>
     <body>
+        <div id="loaderProgress"></div>
+
         <canvas id="theCanvas" width="1200" height="800"></canvas>
-        <div id="ui">
-            <div id="userInfo">
-                <label class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"><span id="money" class="ui-button-text">$0</span></label>
-            </div>
-            
-            <div id="tools">
-                <input type="radio" class="tool active" id="build" name="tool" /><label for="build">Build</label>
-                <input type="radio" class="tool" id="demolish" name="tool" /><label for="demolish">Demolish</label>
-                <input type="radio" class="tool" id="zoomin" name="tool" /><label for="zoomin">Zoom In</label>
-                <input type="radio" class="tool" id="zoomout" name="tool" /><label for="zoomout">Zoom Out</label>
-            </div>
-        </div>
-        
-        <div id="buildDialog">
-            Select which building you want to build:
-            <div class="button" id="cinema">Cinema</div>
-            <div class="button" id="icecream">Ice Cream</div>
-        </div>
-        
-        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" charset="utf-8"></script>
-        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" charset="utf-8"></script>
-        <!-- app has to come first -->
-		<script type="text/javascript" src="./js/resources.js" charset="utf-8"></script>
-		<script type="text/javascript" src="./js/buildings.js" charset="utf-8"></script>
-		<script type="text/javascript" src="./js/app.js" charset="utf-8"></script>
-		<script type="text/javascript" src="./js/timer.js" charset="utf-8"></script>
-        <script type="text/javascript" src="./js/sprite.js" charset="utf-8"></script>
-        <script type="text/javascript" src="./js/ui.js" charset="utf-8"></script>
-        <script type="text/javascript" src="./js/user.js" charset="utf-8"></script>
-        <script type="text/javascript" src="./js/boot.js" charset="utf-8"></script>
+
+        <script data-main="scripts/boot" src="scripts/require.min.js"></script>
     </body>
 </html>
-
-

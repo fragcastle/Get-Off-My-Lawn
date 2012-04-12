@@ -1,0 +1,7 @@
+#loaderProgress {
+    width: 200px;
+    margin: 0 auto;
+    height: 24px;
+    position: relative;
+    top: 50%;
+}
