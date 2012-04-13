@@ -17,9 +17,10 @@ require(
         "modules/engine.game",
         "modules/engine.debug",
         "modules/builder.home",
-        "modules/builder.trees"
+        "modules/builder.trees",
+        "modules/builder.enemies"
     ],
-    function($, mapEngine, eventEngine, configEngine, assetLoader, gameEngine) {
+    function($, mapEngine, eventEngine, configEngine, assetLoader, gameEngine, debugEngine) {
         configEngine.set("shouldDebug", true);
 
         // create a list of the assets we want to load
@@ -27,7 +28,8 @@ require(
             "images/grass.png",
             "images/dirt.png",
             "images/icecream.png",
-            "images/tree.png"
+            "images/tree.png",
+            "images/kit_from_firefox.png"
         ];
 
         $(function () {
