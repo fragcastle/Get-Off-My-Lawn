@@ -1,6 +1,6 @@
 define(
-    ['modules/engine.events', 'modules/engine.game'],
-    function (eventEngine, gameEngine) {
+    ['modules/engine.events', 'modules/engine.game', 'modules/engine.debug'],
+    function (eventEngine, gameEngine, debugEngine) {
     var maps = { // should load maps from server
         levelOne: {
             data: "GGGGGGGGGGGGGGDGGGGGGGGGG",
@@ -10,6 +10,7 @@ define(
                 width: 128
             },
             treeFactor: .05,
+            enemyFactor: .1,
             tiles: {
                 "G": 'images/grass.png',
                 "D": 'images/dirt.png'
@@ -79,18 +80,33 @@ define(
             };
 
             if ( entity ) {
-                pos.x -= entity.width - tile.width;
-                pos.y -= entity.height - tile.height;
+                if (entity.width != tile.width) {
+                    pos.x += tile.width / 2 - entity.width / 2;
+                }
+                
+                if (entity.height != tile.height) {
+                    pos.y -= entity.height - tile.height;
+                }
             }
 
             return pos;
         },
+        rowColToIndex: function(row, col) {
+            return (row * _currentMap.width + col);
+        },
         tileLoop: function(fn) {
-            for(var index = -1, len = _currentMap.data.length; ++index < len; ) {
-                var row     = index < _currentMap.width ? 0 : Math.floor(index/_currentMap.width),
-                    col     = Math.floor(index%_currentMap.width);
+            var index = 0;
+            
+            for (var startPosition = 0; startPosition < _currentMap.width; startPosition++) {
+                for (var row = startPosition; row < _currentMap.width; row++) {
+                    var index = this.rowColToIndex(row, startPosition);
+                    fn.call(this, row, startPosition, index);
+                }
                 
-                fn.call(this, row, col, index);
+                for (var col = startPosition + 1; col < _currentMap.width; col++) {
+                    var index = this.rowColToIndex(startPosition, col);
+                    fn.call(this, startPosition, col, index);
+                }
             }
         },
         renderTo: function(canvas, context) {
@@ -99,11 +115,15 @@ define(
             
             this.tileLoop(function(row, col, index) {
                 var img     = this.getTileImage(index),
-                    pos     = this.translatePosition( row, col, img, canvas );
+                    pos     = this.translatePosition( row, col );
 
                 context.drawImage(img, pos.x, pos.y, img.width, img.height);
-                eventEngine.pub(this.events.TILE_DRAW, this, [index, row, col, pos]);
-                // TODO: tree builder should sub to TILE_DRAW to render trees
+                
+                eventEngine.pub(this.events.TILE_RENDER, this, [index, row, col, pos]);
+                eventEngine.pub(this.events.BUILDING_RENDER, this, [index, row, col, pos]);
+                eventEngine.pub(this.events.DEFENSE_RENDER, this, [index, row, col, pos]);
+                eventEngine.pub(this.events.PLAYER_RENDER, this, [index, row, col, pos]);
+                eventEngine.pub(this.events.EFFECT_RENDER, this, [index, row, col, pos]);
             });
             
             eventEngine.pub(this.events.LOAD_COMPLETE);
@@ -128,8 +148,13 @@ define(
         },
         events: {
             LOAD_COMPLETE: "loadDone",
-            TILE_DRAW: "tileDraw",
-            LEVEL_LOADED: "levelLoaded"
+            LEVEL_LOADED: "levelLoaded",
+            
+            TILE_RENDER: "tileRender",
+            BUILDING_RENDER: "buildingRender",
+            DEFENSE_RENDER: "defenseRender",
+            PLAYER_RENDER: "playerRender",
+            EFFECT_RENDER: "effectRender"
         }
     };
 });

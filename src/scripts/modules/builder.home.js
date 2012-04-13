@@ -1,19 +1,26 @@
 require(
-    ["modules/engine.map", "modules/engine.events", "modules/engine.game"],
-    function(mapEngine, eventEngine, gameEngine) {
-        eventEngine.sub(mapEngine.events.LOAD_COMPLETE, function(){
+    ["modules/engine.map", "modules/engine.events", "modules/engine.game", 'modules/engine.debug'],
+    function(mapEngine, eventEngine, gameEngine, debugEngine) {
+        var _home, _homeImage, _homePosition;
+        
+        eventEngine.sub(mapEngine.events.LEVEL_LOADED, function() {
             var map = mapEngine.getCurrentMap();
-            var homeEntity = map.entities.home;
-            var canvas = gameEngine.getCanvas();
-            var context = gameEngine.getContext();
-            var homeImage = new Image();
-            homeImage.src = homeEntity.texture;
-            var pos = mapEngine.translatePosition(homeEntity.row, homeEntity.col, homeImage);
-
+            _home = map.entities.home;
+            _homeImage = new Image();
+            _homeImage.src = _home.texture;
+            
             // center the image within the tile
-            var y = pos.y; // + homeImage.height/2;
-            var x = pos.x;
-
-            context.drawImage(homeImage, x, y, homeImage.width, homeImage.height);
+            _homePosition = mapEngine.translatePosition(_home.row, _home.col, _homeImage);
+            
+            debugEngine.log("LOAD_COMPLETE - homeBuilder");
+        });
+        
+        eventEngine.sub(mapEngine.events.BUILDING_RENDER, function(index, row, col) {
+            if (_home.row === row && _home.col === col) {
+                var context = gameEngine.getContext();
+                context.drawImage(_homeImage, _homePosition.x, _homePosition.y, _homeImage.width, _homeImage.height);
+                
+                debugEngine.log("BUILDING_RENDER - homeBuilder");
+            }
         });
     });
