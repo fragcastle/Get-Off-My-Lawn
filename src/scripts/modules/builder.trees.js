@@ -1,8 +1,7 @@
 require(
     ["modules/engine.map", "modules/engine.events", "modules/engine.game", "modules/loader.assets", "modules/engine.debug",],
     function(mapEngine, eventEngine, gameEngine, assetLoader, debugEngine) {
-        var _tree = null;
-            _treePositions = null;
+        var _tree, _treePositions;
         
         function createImage(path) {
             var x = new Image();
@@ -31,20 +30,14 @@ require(
         }
         
         eventEngine.sub(mapEngine.events.LEVEL_LOADED, function() {
-            debugEngine.log("LOAD_COMPLETE - treeEngine");
-            
-            var map = mapEngine.getCurrentMap();
+            debugEngine.log("LOAD_COMPLETE - treeBuilder");
 
-            var context = gameEngine.getContext();
-            var canvas  = gameEngine.getCanvas();
-
-            // Generate the position of the trees
             _tree = assetLoader.getAsset("images/tree.png");
             _treePositions = randomNumbers( mapEngine.getCurrentMap().treeFactor * 100 );
         });
         
-        eventEngine.sub(mapEngine.events.TILE_DRAW, function(index, row, col) {
-            debugEngine.log("TILE_DRAW - treeEngine");
+        eventEngine.sub(mapEngine.events.BUILDING_RENDER, function(index, row, col) {
+            debugEngine.log("BUILDING_RENDER - treeBuilder");
             
             var context = gameEngine.getContext();
             

@@ -38,7 +38,7 @@ define(["modules/engine.events", "jquery"], function(eventEngine, $) {
         getContext: function() {
             return context;
         },
-        events:{
+        events: {
             MOUSE_DOWN: "mouseDown",
             THE_LOOP: "theLoop",
             RESIZE: "resize",
