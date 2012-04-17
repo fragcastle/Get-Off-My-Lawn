@@ -1,6 +1,6 @@
 define(
-    ['modules/engine.events', 'modules/engine.game', 'modules/engine.enemy', 'modules/loader.assets', 'modules/engine.debug'],
-    function (eventEngine, gameEngine, enemyEngine, assetLoader, debugEngine) {
+    ['modules/engine.events', 'modules/engine.game', 'modules/loader.assets', 'modules/engine.debug'],
+    function (eventEngine, gameEngine, assetLoader, debugEngine) {
     var maps = { // should load maps from server
         levelOne: {
             data: "GGGGGGGGGGGGGGDGGGGGGGGGG",
