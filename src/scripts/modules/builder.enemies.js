@@ -35,8 +35,6 @@ require(
         }
         
         eventEngine.sub(mapEngine.events.LEVEL_LOADED, function() {
-            debugEngine.log("LOAD_COMPLETE - enemyBuilder");
-            
             var map = mapEngine.getCurrentMap();
 
             _enemy = assetLoader.getAsset("images/kit_from_firefox.png");
@@ -44,13 +42,17 @@ require(
         });
         
         eventEngine.sub(mapEngine.events.PLAYER_RENDER, function(index, row, col) {
-            debugEngine.log("PLAYER_RENDER - enemyBuilder");
+            // var context = gameEngine.getContext();
             
-            var context = gameEngine.getContext();
-            
-            if (inArray(_enemyPositions, index)) {
-                var pos = mapEngine.translatePosition(row, col, _enemySpriteSize);
-                context.drawImage(_enemy, 0, 0, _enemySpriteSize.width, _enemySpriteSize.height, pos.x, pos.y, _enemySpriteSize.width, _enemySpriteSize.height);
+            // if (inArray(_enemyPositions, index)) {
+                // var pos = mapEngine.translatePosition(row, col, _enemySpriteSize);
+                // context.drawImage(_enemy, 0, 0, _enemySpriteSize.width, _enemySpriteSize.height, pos.x, pos.y, _enemySpriteSize.width, _enemySpriteSize.height);
+            // }
+        });
+        
+        eventEngine.sub(gameEngine.events.KEY_PRESS, function (canvas, context, e) {
+            for (var i = 0; i < _enemyPositions.length; i++) {
+                _enemyPositions[i] = _enemyPositions[i] + mapEngine.getCurrentMap().width;
             }
         });
     });

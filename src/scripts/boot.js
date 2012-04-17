@@ -29,7 +29,12 @@ require(
             "images/dirt.png",
             "images/icecream.png",
             "images/tree.png",
-            "images/kit_from_firefox.png"
+            "images/kit_from_firefox.png",
+            "images/gnu_from_gnu.png",
+            "images/droid_from_android.png",
+            "images/sara_from_opengameart.png",
+            "images/tux_from_linux.png",
+            "images/wilber_from_gimp_0.png"
         ];
 
         $(function () {
@@ -43,8 +48,11 @@ require(
             // don't render until all the assets have been loaded
             eventEngine.sub(assetLoader.events.ALL_ASSETS_LOADED, function(e) {
                 $("#loaderProgress").hide();
-                mapEngine.setCurrentLevel("levelOne")
-                         .renderTo(gameEngine.getCanvas(), gameEngine.getContext());
+                mapEngine.setCurrentLevel("levelOne");
+                
+                eventEngine.sub(gameEngine.events.THE_LOOP, function (e) {
+                    mapEngine.renderTo(gameEngine.getCanvas(), gameEngine.getContext());
+                 });
             });
 
             eventEngine.sub(assetLoader.events.ASSET_LOAD, function(itemCount) {

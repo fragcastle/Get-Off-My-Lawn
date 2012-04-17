@@ -74,6 +74,9 @@ define(
                         function onSuccess(e, img) {
                             counter.successes++;
                             var args = [ counter.sum(), img.src, "ok", e ];
+                            
+                            debugEngine.log('Loaded image:');
+                            debugEngine.log(img);
 
                             eventEngine.pub(manager.events.ASSET_LOAD, manager, args);
                             if( manager.doneYet() ) {

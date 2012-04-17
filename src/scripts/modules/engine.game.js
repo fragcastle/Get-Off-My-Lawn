@@ -1,4 +1,6 @@
-define(["modules/engine.events", "jquery"], function(eventEngine, $) {
+define(
+    ["modules/engine.events", "jquery"], 
+    function(eventEngine, $, debugEngine) {
     var canvas = document.getElementById('theCanvas');
     var context = canvas.getContext('2d');
 
@@ -6,7 +8,11 @@ define(["modules/engine.events", "jquery"], function(eventEngine, $) {
         // pass the event off to any listeners
         eventEngine.pub("mouseDown", this, [canvas, context, e]);
     }, false);
-
+    
+    document.onkeypress = function(e) {
+        eventEngine.pub("keyPress", this, [canvas, context, e]);
+    };
+    
     canvas.addEventListener("mousemove", function(e){
         eventEngine.pub("mouseMove", this, [canvas, context, e]);
     }, false);
@@ -23,13 +29,27 @@ define(["modules/engine.events", "jquery"], function(eventEngine, $) {
             width: document.body.clientWidth
         }]);
     });
+    
+    window.requestAnimFrame = (function(callback) {
+        return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function(callback) {
+            window.setTimeout(callback, 1000 / 60);
+        };
+    })();
 
-    var _loopTimer = null;
-    $(function theLoop() {
-        _loopTimer = setInterval(function(){
-            eventEngine.pub("theLoop");
-        }, 1);
-    });
+    var gameLoop = function () {
+        eventEngine.pub("theLoop");
+        
+        requestAnimFrame(function() {    
+            gameLoop();
+        });
+    }
+    
+    $(gameLoop);
 
     return {
         getCanvas: function() {
@@ -42,7 +62,8 @@ define(["modules/engine.events", "jquery"], function(eventEngine, $) {
             MOUSE_DOWN: "mouseDown",
             THE_LOOP: "theLoop",
             RESIZE: "resize",
-            MOUSE_MOVE: "mouseMove"
+            MOUSE_MOVE: "mouseMove",
+            KEY_PRESS: "keyPress"
         }
     };
 });
