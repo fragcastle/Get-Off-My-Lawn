@@ -119,11 +119,12 @@ define(
                 enemyTemplates[enemyIndex].image = assetLoader.getAsset(enemyTemplates[enemyIndex].imagePath);
                 
                 var enemy = {
+                    index: i,
                     enemyTemplate: enemyTemplates[enemyIndex],
                     life: 20
                 };
                 
-                enemies[i] = enemy;
+                enemies.push(enemy);
             }
             
             eventEngine.pub(this.events.LEVEL_LOADED);
@@ -214,11 +215,18 @@ define(
                 eventEngine.pub(this.events.PLAYER_RENDER, this, [index, row, col, pos]);
                 eventEngine.pub(this.events.EFFECT_RENDER, this, [index, row, col, pos]);
                 
-                var enemy = _currentMap.enemies[index];
+                var enemies = _currentMap.enemies;
+                var enemyCount = enemies.length;
                 
-                if (enemy) {
-                    var pos = this.translatePositionEntity(row, col, enemy.enemyTemplate.size);
-                    context.drawImage(enemy.enemyTemplate.image, enemy.enemyTemplate.front.x, enemy.enemyTemplate.front.y, enemy.enemyTemplate.size.width, enemy.enemyTemplate.size.height, pos.x, pos.y, enemy.enemyTemplate.size.width, enemy.enemyTemplate.size.height);
+                for (var i = 0; i < enemyCount; i++) {
+                    if (enemies[i].index === index) {
+                        var enemy = enemies[i];
+                    
+                        var pos = this.translatePositionEntity(row, col, enemy.enemyTemplate.size);
+                        context.drawImage(enemy.enemyTemplate.image, enemy.enemyTemplate.front.x, enemy.enemyTemplate.front.y, enemy.enemyTemplate.size.width, enemy.enemyTemplate.size.height, pos.x, pos.y, enemy.enemyTemplate.size.width, enemy.enemyTemplate.size.height);
+                        
+                        break;
+                    }
                 }
             });
         },

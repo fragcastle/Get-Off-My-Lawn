@@ -41,14 +41,21 @@ define(
         };
     })();
 
-    var gameLoop = function () {
-        eventEngine.pub("theLoop");
+    var renderLoop = function () {
+        eventEngine.pub("renderLoop");
         
         requestAnimFrame(function() {    
-            gameLoop();
+            renderLoop();
         });
     }
     
+    var gameLoop = function () {
+        eventEngine.pub("gameLoop");
+        
+        window.setTimeout(gameLoop, 2000);
+    }
+    
+    $(renderLoop);
     $(gameLoop);
 
     return {
@@ -60,7 +67,8 @@ define(
         },
         events: {
             MOUSE_DOWN: "mouseDown",
-            THE_LOOP: "theLoop",
+            RENDER_LOOP: "renderLoop",
+            GAME_LOOP: "gameLoop",
             RESIZE: "resize",
             MOUSE_MOVE: "mouseMove",
             KEY_PRESS: "keyPress"

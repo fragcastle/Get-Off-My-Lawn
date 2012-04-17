@@ -49,9 +49,19 @@ require(
                 $("#loaderProgress").hide();
                 mapEngine.setCurrentLevel("levelOne");
                 
-                eventEngine.sub(gameEngine.events.THE_LOOP, function (e) {
+                eventEngine.sub(gameEngine.events.RENDER_LOOP, function (e) {
                     mapEngine.renderTo(gameEngine.getCanvas(), gameEngine.getContext());
-                 });
+                });
+                
+                eventEngine.sub(gameEngine.events.GAME_LOOP, function (e) {
+                    var currentMap = mapEngine.getCurrentMap();
+                    var enemies = currentMap.enemies;
+                    var length = enemies.length;
+                    
+                    for (var i = 0; i < length; i++) {
+                        enemies[i].index += currentMap.width;
+                    }
+                });
             });
 
             eventEngine.sub(assetLoader.events.ASSET_LOAD, function(itemCount) {
