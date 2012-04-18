@@ -1,6 +1,6 @@
 define(
-    ['modules/engine.events', 'modules/engine.game', 'modules/loader.assets', 'modules/engine.debug'],
-    function (eventEngine, gameEngine, assetLoader, debugEngine) {
+    ['modules/engine.events', 'modules/engine.game', 'modules/engine.util', 'modules/loader.assets', 'modules/engine.player', 'modules/engine.debug'],
+    function (eventEngine, gameEngine, util, assetLoader, playerEngine, debugEngine) {
     var maps = { // should load maps from server
         levelOne: {
             data: "GGGGGGGGGGGGGGDGGGGGGGGGG",
@@ -18,48 +18,90 @@ define(
                     imagePath: "images/kit_from_firefox.png",
                     image: null,
                     size: { width: 56, height: 80 },
-                    front: { x: 0, y: 0 },
-                    back: { x: 56, y: 80 }
+                    ready: { x: 0, y: 0 },
+                    walk: { x: 0, y: 80 },
+                    jump: { x: 0, y: 160 },
+                    flinch: { x: 0, y: 240 },
+                    swing: { x: 0, y: 320 },
+                    kick: { x: 0, y: 400 },
+                    jumpswing: { x: 0, y: 480 },
+                    jumpkick: { x: 0, y: 560 },
+                    dizzy: { x: 0, y: 640 }
                 },
                 {
                     name: 'Gnu',
                     imagePath: "images/gnu_from_gnu.png",
                     image: null,
                     size: { width: 56, height: 80 },
-                    front: { x: 0, y: 0 },
-                    back: { x: 56, y: 80 }
+                    ready: { x: 0, y: 0 },
+                    walk: { x: 0, y: 80 },
+                    jump: { x: 0, y: 160 },
+                    flinch: { x: 0, y: 240 },
+                    swing: { x: 0, y: 320 },
+                    kick: { x: 0, y: 400 },
+                    jumpswing: { x: 0, y: 480 },
+                    jumpkick: { x: 0, y: 560 },
+                    dizzy: { x: 0, y: 640 }
                 },
                 {
                     name: 'Android',
                     imagePath: "images/droid_from_android.png",
                     image: null,
                     size: { width: 56, height: 80 },
-                    front: { x: 0, y: 0 },
-                    back: { x: 56, y: 80 }
+                    ready: { x: 0, y: 0 },
+                    walk: { x: 0, y: 80 },
+                    jump: { x: 0, y: 160 },
+                    flinch: { x: 0, y: 240 },
+                    swing: { x: 0, y: 320 },
+                    kick: { x: 0, y: 400 },
+                    jumpswing: { x: 0, y: 480 },
+                    jumpkick: { x: 0, y: 560 },
+                    dizzy: { x: 0, y: 640 }
                 },
                 {
                     name: 'Sara',
                     imagePath: "images/sara_from_opengameart.png",
                     image: null,
                     size: { width: 56, height: 80 },
-                    front: { x: 0, y: 0 },
-                    back: { x: 56, y: 80 }
+                    ready: { x: 0, y: 0 },
+                    walk: { x: 0, y: 80 },
+                    jump: { x: 0, y: 160 },
+                    flinch: { x: 0, y: 240 },
+                    swing: { x: 0, y: 320 },
+                    kick: { x: 0, y: 400 },
+                    jumpswing: { x: 0, y: 480 },
+                    jumpkick: { x: 0, y: 560 },
+                    dizzy: { x: 0, y: 640 }
                 },
                 {
                     name: 'Tux',
                     imagePath: "images/tux_from_linux.png",
                     image: null,
                     size: { width: 56, height: 80 },
-                    front: { x: 0, y: 0 },
-                    back: { x: 56, y: 80 }
+                    ready: { x: 0, y: 0 },
+                    walk: { x: 0, y: 80 },
+                    jump: { x: 0, y: 160 },
+                    flinch: { x: 0, y: 240 },
+                    swing: { x: 0, y: 320 },
+                    kick: { x: 0, y: 400 },
+                    jumpswing: { x: 0, y: 480 },
+                    jumpkick: { x: 0, y: 560 },
+                    dizzy: { x: 0, y: 640 }
                 },
                 {
                     name: 'Wilber',
                     imagePath: "images/wilber_from_gimp_0.png",
                     image: null,
                     size: { width: 56, height: 80 },
-                    front: { x: 0, y: 0 },
-                    back: { x: 56, y: 80 }
+                    ready: { x: 0, y: 0 },
+                    walk: { x: 0, y: 80 },
+                    jump: { x: 0, y: 160 },
+                    flinch: { x: 0, y: 240 },
+                    swing: { x: 0, y: 320 },
+                    kick: { x: 0, y: 400 },
+                    jumpswing: { x: 0, y: 480 },
+                    jumpkick: { x: 0, y: 560 },
+                    dizzy: { x: 0, y: 640 }
                 }
             ],
             tiles: {
@@ -121,7 +163,9 @@ define(
                 var enemy = {
                     index: i,
                     enemyTemplate: enemyTemplates[enemyIndex],
-                    life: 20
+                    life: 20,
+                    stance: util.random(playerEngine.stances),
+                    orientation: util.random(playerEngine.orientations)
                 };
                 
                 enemies.push(enemy);
@@ -205,25 +249,60 @@ define(
             
             this.tileLoop(function(row, col, index) {
                 var img     = this.getTileImage(index),
-                    pos     = this.translatePosition( row, col );
+                    tilePos     = this.translatePosition( row, col );
 
-                context.drawImage(img, pos.x, pos.y, img.width, img.height);
+                context.drawImage(img, tilePos.x, tilePos.y, img.width, img.height);
                 
-                eventEngine.pub(this.events.TILE_RENDER, this, [index, row, col, pos]);
-                eventEngine.pub(this.events.BUILDING_RENDER, this, [index, row, col, pos]);
-                eventEngine.pub(this.events.DEFENSE_RENDER, this, [index, row, col, pos]);
-                eventEngine.pub(this.events.PLAYER_RENDER, this, [index, row, col, pos]);
-                eventEngine.pub(this.events.EFFECT_RENDER, this, [index, row, col, pos]);
+                eventEngine.pub(this.events.TILE_RENDER, this, [index, row, col, tilePos]);
+                eventEngine.pub(this.events.BUILDING_RENDER, this, [index, row, col, tilePos]);
+                eventEngine.pub(this.events.DEFENSE_RENDER, this, [index, row, col, tilePos]);
+                eventEngine.pub(this.events.PLAYER_RENDER, this, [index, row, col, tilePos]);
+                eventEngine.pub(this.events.EFFECT_RENDER, this, [index, row, col, tilePos]);
                 
                 var enemies = _currentMap.enemies;
                 var enemyCount = enemies.length;
                 
+                
                 for (var i = 0; i < enemyCount; i++) {
                     if (enemies[i].index === index) {
                         var enemy = enemies[i];
-                    
+                        var stances = playerEngine.stances;
+                        var stance;
+                        
+                        if (enemy.stance === stances.ready) {
+                            stance = enemy.enemyTemplate.ready;
+                        } else if (enemy.stance === stances.walk) {
+                            stance = enemy.enemyTemplate.walk;
+                        } else if (enemy.stance === stances.jump) {
+                            stance = enemy.enemyTemplate.jump;
+                        } else if (enemy.stance === stances.flinch) {
+                            stance = enemy.enemyTemplate.flinch;
+                        } else if (enemy.stance === stances.swing) {
+                            stance = enemy.enemyTemplate.swing;
+                        } else if (enemy.stance === stances.kick) {
+                            stance = enemy.enemyTemplate.kick;
+                        } else if (enemy.stance === stances.jumpswing) {
+                            stance = enemy.enemyTemplate.jumpswing;
+                        } else if (enemy.stance === stances.jumpkick) {
+                            stance = enemy.enemyTemplate.jumpkick;
+                        } else if (enemy.stance === stances.dizzy) {
+                            stance = enemy.enemyTemplate.dizzy;
+                        }
+                        
                         var pos = this.translatePositionEntity(row, col, enemy.enemyTemplate.size);
-                        context.drawImage(enemy.enemyTemplate.image, enemy.enemyTemplate.front.x, enemy.enemyTemplate.front.y, enemy.enemyTemplate.size.width, enemy.enemyTemplate.size.height, pos.x, pos.y, enemy.enemyTemplate.size.width, enemy.enemyTemplate.size.height);
+                        var frameChange = gameEngine.getCurrentFrame() * enemy.enemyTemplate.size.width;
+                        
+                        if (enemy.orientation === playerEngine.orientations.left) {
+                            context.save();
+                            context.translate(tilePos.x + 80, tilePos.y - 40);
+                            context.scale(-1, 1);
+                            
+                            pos = { x: 0, y: 0 };
+                        }
+                        // Image, image x, image y, image width, image height, map x, map y, map width, map height
+                        context.drawImage(enemy.enemyTemplate.image, stance.x + frameChange, stance.y, enemy.enemyTemplate.size.width, enemy.enemyTemplate.size.height, pos.x, pos.y, enemy.enemyTemplate.size.width, enemy.enemyTemplate.size.height);
+                        
+                        context.restore();
                         
                         break;
                     }

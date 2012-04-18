@@ -1,9 +1,15 @@
 define(
-    ["modules/engine.events", "jquery"], 
-    function(eventEngine, $, debugEngine) {
+    ["modules/engine.events", "modules/engine.util", "jquery"], 
+    function(eventEngine, util, $) {
     var canvas = document.getElementById('theCanvas');
     var context = canvas.getContext('2d');
-
+    
+    var frameCount = 3;
+    var msPerFrame = 150;
+    
+    var currentFrame = 0;
+    var lastFrameChange = Date.now();
+    
     canvas.addEventListener('mousedown', function(e){
         // pass the event off to any listeners
         eventEngine.pub("mouseDown", this, [canvas, context, e]);
@@ -42,11 +48,21 @@ define(
     })();
 
     var renderLoop = function () {
-        eventEngine.pub("renderLoop");
-        
         requestAnimFrame(function() {    
             renderLoop();
         });
+        
+        var delta = Date.now() - lastFrameChange;
+        
+        if (delta > msPerFrame) {
+            lastFrameChange = Date.now();
+            currentFrame++;
+            
+            if (currentFrame === 3)
+                currentFrame = 0;
+        }
+        
+        eventEngine.pub("renderLoop");
     }
     
     var gameLoop = function () {
@@ -59,6 +75,9 @@ define(
     $(gameLoop);
 
     return {
+        getCurrentFrame: function() {
+            return currentFrame;
+        },
         getCanvas: function() {
             return canvas;
         },
