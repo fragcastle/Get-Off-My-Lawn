@@ -3,14 +3,15 @@ define(
     function (eventEngine, gameEngine, util, assetLoader, playerEngine, debugEngine) {
     var maps = { // should load maps from server
         levelOne: {
-            data: "GGGGGGGGGGGGGGDGGGGGGGGGW",
+            data: "GFGGGGFGGGGFGGDGGGGGGFGWW",
+            spawnData: "1000010000100001000010000",
             width: 5,
             tileDimensions: {
                 height: 64,
                 width: 128
             },
             treeFactor: .05,
-            enemyFactor: 0.1,
+            enemyFactor: 0.5,
             enemies: [],
             enemyTemplates: [
                 {
@@ -107,7 +108,8 @@ define(
             tiles: {
                 "G": 'images/grass.png',
                 "D": 'images/dirt.png',
-                "W": 'images/dirt.png'
+                "W": 'images/water.png',
+                "F": 'images/fence.png'
             },
             entities: {
                 tiles: {
@@ -149,7 +151,8 @@ define(
         },
         setCurrentLevel: function(name) {
             _currentMap = maps[name] || _currentMap;
-
+            
+            var spawnData = _currentMap.spawnData;
             var length = _currentMap.enemyTemplates.length;
             var enemyTemplates = _currentMap.enemyTemplates;
             var enemies = _currentMap.enemies;
@@ -157,7 +160,7 @@ define(
             var mapSize = _currentMap.width * _currentMap.width;
 
             for (var i = 0; i < mapSize; i++) {
-                if (util.propability(_currentMap.enemyFactor)) {
+                if (spawnData[i] > 0 && util.propability(_currentMap.enemyFactor)) {
                     var enemyIndex = Math.floor(Math.random() * length);
 
                     enemyTemplates[enemyIndex].image = assetLoader.getAsset(enemyTemplates[enemyIndex].imagePath);
@@ -267,7 +270,9 @@ define(
         },
         renderTo: function(canvas, context) {
             context.clearRect (0, 0, canvas.width, canvas.height);
-
+            context.save();
+            context.translate(0, 100);
+            
             this.tileLoop(function(row, col, index) {
                 var img     = this.getTileImage(index),
                     tilePos = this.translatePosition( row, col );
@@ -325,13 +330,16 @@ define(
 
                         // Image, image x, image y, image width, image height, map x, map y, map width, map height
                         context.drawImage(enemy.enemyTemplate.image, stance.x + frameChange, stance.y, enemy.enemyTemplate.size.width, enemy.enemyTemplate.size.height, pos.x, pos.y, enemy.enemyTemplate.size.width, enemy.enemyTemplate.size.height);
-
-                        context.restore();
-
+                        
+                        if (enemy.orientation === playerEngine.orientations.left) {
+                            context.restore();
+                        }
                         break;
                     }
                 }
             });
+            
+            context.restore();
         },
         tileTypes: {
             "G": {
@@ -349,6 +357,10 @@ define(
             "D": {
                 isBuildable: true,
                 isWalkable: true
+            },
+            "F": {
+                isBuildable: true,
+                isWalkable: false
             }
         },
         events: {
