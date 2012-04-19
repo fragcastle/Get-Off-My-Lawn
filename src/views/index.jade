@@ -1,0 +1,17 @@
+!!! 5
+html(lang='en')
+  head
+    title= title
+    meta(name="viewport", content="width=device-width, initial-scale=1, user-scalable=no")
+    meta(http-equiv="X-UA-Compatible", content="chrome=1")
+    link(rel="stylesheet", href="css/app.css")
+  body
+    #loaderProgress
+    canvas#theCanvas(width="1200", height="800")
+    script(data-main="scripts/boot", src="/scripts/require.min.js")
+    script(src="/socket.io/socket.io.js")
+    script
+      var socket = io.connect('http://localhost:8000');
+      socket.on('disconnect', function (data) {
+        window.location.reload();
+      });

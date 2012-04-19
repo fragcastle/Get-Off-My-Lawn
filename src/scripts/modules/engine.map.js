@@ -128,6 +128,7 @@ define(
             }
         }
     };
+
     var _currentMap = null;
     return {
         _getElligibleEvents: function() {
@@ -140,30 +141,27 @@ define(
             return _e;
         },
         getTileImage: function(cellPos) {
-            var image = new Image();
-            image.src = _currentMap.tiles[_currentMap.data.substr(cellPos,1)];
-            return image;
+            var src = _currentMap.tiles[_currentMap.data.substr(cellPos,1)];
+            return assetLoader.getAsset(src);
         },
         getCurrentMap: function() {
             return _currentMap;
         },
         setCurrentLevel: function(name) {
             _currentMap = maps[name] || _currentMap;
-            
+
             var length = _currentMap.enemyTemplates.length;
             var enemyTemplates = _currentMap.enemyTemplates;
             var enemies = _currentMap.enemies;
-            
-            while(!assetLoader.doneYet) {}
-            
+
             var mapSize = _currentMap.width * _currentMap.width;
-            
+
             for (var i = 0; i < mapSize; i++) {
                 if (util.propability(_currentMap.enemyFactor)) {
                     var enemyIndex = Math.floor(Math.random() * length);
-                    
+
                     enemyTemplates[enemyIndex].image = assetLoader.getAsset(enemyTemplates[enemyIndex].imagePath);
-                    
+
                     var enemy = {
                         index: i,
                         enemyTemplate: enemyTemplates[enemyIndex],
@@ -171,11 +169,11 @@ define(
                         stance: util.random(playerEngine.stances),
                         orientation: util.random(playerEngine.orientations)
                     };
-                    
+
                     enemies.push(enemy);
                 }
             }
-            
+
             eventEngine.pub(this.events.LEVEL_LOADED);
             return this; // for chaining
         },
@@ -195,7 +193,7 @@ define(
             var moves = [];
             var mapWidth = _currentMap.width;
             var mapSize = mapWidth * mapWidth;
-            
+
             if ((index < 0) && (index % mapWidth !== 0))
                 moves.push(index - 1);
             if ((index - 1 < mapSize) && ((index + 1) % mapWidth !== 0))
@@ -204,7 +202,7 @@ define(
                 moves.push(index - mapWidth);
             if (index < mapSize - mapWidth - 1)
                 moves.push(index + mapWidth);
-            
+
             console.log(index);
             console.log(moves);
             return moves;
@@ -221,7 +219,7 @@ define(
                 if (entity.width != tile.width) {
                     pos.x += tile.width / 2 - entity.width / 2;
                 }
-                
+
                 if (entity.height != tile.height) {
                     pos.y -= entity.height - tile.height;
                 }
@@ -241,7 +239,7 @@ define(
                 if (entity.width != tile.width) {
                     pos.x += tile.width / 2 - entity.width / 2;
                 }
-                
+
                 if (entity.height != tile.height) {
                     pos.y -= entity.height - tile.height / 2;
                 }
@@ -254,13 +252,13 @@ define(
         },
         tileLoop: function(fn) {
             var index = 0;
-            
+
             for (var startPosition = 0; startPosition < _currentMap.width; startPosition++) {
                 for (var row = startPosition; row < _currentMap.width; row++) {
                     var index = this.rowColToIndex(row, startPosition);
                     fn.call(this, row, startPosition, index);
                 }
-                
+
                 for (var col = startPosition + 1; col < _currentMap.width; col++) {
                     var index = this.rowColToIndex(startPosition, col);
                     fn.call(this, startPosition, col, index);
@@ -269,30 +267,30 @@ define(
         },
         renderTo: function(canvas, context) {
             context.clearRect (0, 0, canvas.width, canvas.height);
-            
+
             this.tileLoop(function(row, col, index) {
                 var img     = this.getTileImage(index),
                     tilePos = this.translatePosition( row, col );
 
                 context.drawImage(img, tilePos.x, tilePos.y, img.width, img.height);
-                
+
                 eventEngine.pub(this.events.TILE_RENDER, this, [index, row, col, tilePos]);
                 eventEngine.pub(this.events.BUILDING_RENDER, this, [index, row, col, tilePos]);
                 eventEngine.pub(this.events.DEFENSE_RENDER, this, [index, row, col, tilePos]);
                 eventEngine.pub(this.events.PLAYER_RENDER, this, [index, row, col, tilePos]);
                 eventEngine.pub(this.events.EFFECT_RENDER, this, [index, row, col, tilePos]);
-                
+
                 var enemies = _currentMap.enemies;
                 var enemyCount = enemies.length;
-                
-                
+
+
                 for (var i = 0; i < enemyCount; i++) {
                     if (enemies[i].index === index) {
                         var enemy = enemies[i];
                         var stances = playerEngine.stances;
                         var stance;
                         var pos;
-                        
+
                         if (enemy.stance === stances.ready) {
                             stance = enemy.enemyTemplate.ready;
                         } else if (enemy.stance === stances.walk) {
@@ -312,24 +310,24 @@ define(
                         } else if (enemy.stance === stances.dizzy) {
                             stance = enemy.enemyTemplate.dizzy;
                         }
-                        
+
                         var frameChange = gameEngine.getCurrentFrame() * enemy.enemyTemplate.size.width;
-                        
+
                         if (enemy.orientation === playerEngine.orientations.left) {
                             context.save();
                             context.translate(tilePos.x + 80, tilePos.y - 40);
                             context.scale(-1, 1);
-                            
+
                             pos = { x: 0, y: 0 };
                         } else {
                             pos = this.translatePositionEntity(row, col, enemy.enemyTemplate.size);
                         }
-                        
+
                         // Image, image x, image y, image width, image height, map x, map y, map width, map height
                         context.drawImage(enemy.enemyTemplate.image, stance.x + frameChange, stance.y, enemy.enemyTemplate.size.width, enemy.enemyTemplate.size.height, pos.x, pos.y, enemy.enemyTemplate.size.width, enemy.enemyTemplate.size.height);
-                        
+
                         context.restore();
-                        
+
                         break;
                     }
                 }
@@ -355,7 +353,7 @@ define(
         },
         events: {
             LEVEL_LOADED: "levelLoaded",
-            
+
             TILE_RENDER: "tileRender",
             BUILDING_RENDER: "buildingRender",
             DEFENSE_RENDER: "defenseRender",
