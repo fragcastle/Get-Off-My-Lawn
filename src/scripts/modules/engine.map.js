@@ -9,8 +9,7 @@ define(
         'http://localhost:8000/maps.json?callback=define'
     ],
     function (eventEngine, gameEngine, util, assetLoader, playerEngine, debugEngine, mapSet) {
-        var maps = mapSet;
-        var _currentMap = null;
+        var maps = mapSet, _currentMap = null;
         return {
             _getElligibleEvents: function() {
                 var _e = [];
@@ -31,6 +30,7 @@ define(
             setCurrentLevel: function(name) {
                 _currentMap = maps[name] || _currentMap;
 
+                var spawnData = _currentMap.spawnData;
                 var length = _currentMap.enemyTemplates.length;
                 var enemyTemplates = _currentMap.enemyTemplates;
                 var enemies = _currentMap.enemies;
@@ -38,7 +38,7 @@ define(
                 var mapSize = _currentMap.width * _currentMap.width;
 
                 for (var i = 0; i < mapSize; i++) {
-                    if (util.propability(_currentMap.enemyFactor)) {
+                    if (spawnData[i] > 0 && util.propability(_currentMap.enemyFactor)) {
                         var enemyIndex = Math.floor(Math.random() * length);
 
                         enemyTemplates[enemyIndex].image = assetLoader.getAsset(enemyTemplates[enemyIndex].imagePath);
@@ -148,6 +148,8 @@ define(
             },
             renderTo: function(canvas, context) {
                 context.clearRect (0, 0, canvas.width, canvas.height);
+                context.save();
+                context.translate(0, 100);
 
                 this.tileLoop(function(row, col, index) {
                     var img     = this.getTileImage(index),
@@ -207,12 +209,15 @@ define(
                             // Image, image x, image y, image width, image height, map x, map y, map width, map height
                             context.drawImage(enemy.enemyTemplate.image, stance.x + frameChange, stance.y, enemy.enemyTemplate.size.width, enemy.enemyTemplate.size.height, pos.x, pos.y, enemy.enemyTemplate.size.width, enemy.enemyTemplate.size.height);
 
-                            context.restore();
-
+                            if (enemy.orientation === playerEngine.orientations.left) {
+                                context.restore();
+                            }
                             break;
                         }
                     }
                 });
+
+                context.restore();
             },
             tileTypes: {
                 "G": {
@@ -230,6 +235,10 @@ define(
                 "D": {
                     isBuildable: true,
                     isWalkable: true
+                },
+                "F": {
+                    isBuildable: true,
+                    isWalkable: false
                 }
             },
             events: {

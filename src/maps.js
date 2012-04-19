@@ -1,13 +1,14 @@
-var maps = {
+var maps = { // should load maps from server
     levelOne: {
-        data: "GGGGGGGGGGGGGGDGGGGGGGGGW",
+        data: "GFGGGGFGGGGFGGDGGGGGGFGWW",
+        spawnData: "1000010000100001000010000",
         width: 5,
         tileDimensions: {
             height: 64,
             width: 128
         },
         treeFactor: .05,
-        enemyFactor: 0.1,
+        enemyFactor: 0.5,
         enemies: [],
         enemyTemplates: [
             {
@@ -104,7 +105,8 @@ var maps = {
         tiles: {
             "G": 'images/grass.png',
             "D": 'images/dirt.png',
-            "W": 'images/dirt.png'
+            "W": 'images/water.png',
+            "F": 'images/fence.png'
         },
         entities: {
             tiles: {

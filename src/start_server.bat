@@ -1,9 +1,2 @@
-REM Starts an IIS EXPRESS server in the project src directory
-
-IF NOT EXIST %programfiles(x86)% GOTO 32
-
-64:
-"%programfiles(x86)%\iis express\iisexpress" /path:"%cd%"
-
-32:
-"%programfiles%\iis express\iisexpress" /path:"%cd%"
+REM Starts our nodejs server in the current directory
+supervisor -w "views,scripts,css,images,app.js,maps.js" -e "jade,js,css,png" app.js

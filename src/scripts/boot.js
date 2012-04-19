@@ -27,6 +27,8 @@ require(
         var assets = [
             "images/grass.png",
             "images/dirt.png",
+            "images/water.png",
+            "images/fence.png",
             "images/icecream.png",
             "images/tree.png",
             "images/kit_from_firefox.png",

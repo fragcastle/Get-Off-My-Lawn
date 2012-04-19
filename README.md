@@ -22,6 +22,6 @@ You can also run GOML using nodejs. This is probably what we will use to host GO
 
 These commands will install the GOML nodejs application dependencies on your machine. This will also install a tool called "supervisor" which enables hot reload of a nodejs application when source files change. Now, just start the nodejs server with supervisor enabled:
 
-    $  supervisor -w "views,scripts,css,images,app.js" -e "jade,js,css,png" app.js
+    $  .\start_server
 
 Now, whenever you change a javascript, css, png or jade view file, the server will reload and the client will refresh in the browser.

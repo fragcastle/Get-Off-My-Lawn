@@ -32,24 +32,23 @@ define(
         eventEngine.sub(gameEngine.events.MOUSE_MOVE, function(canvas, context, e) {
             var shouldDebug = configEngine.get("shouldDebug");
             if( shouldDebug ) {
-                var pos     = { x: e.clientX, y: e.clientY },
-                    img     = context.getImageData(e.clientX, e.clientY, 1, 1),        
-                    idata   = img.data,
-                    red     = idata[0],         
-                    green   = idata[1],           
-                    blue    = idata[2],          
-                    alpha   = idata[3];
-                var rgba    = 'rgba(' + red + ', ' + green + ', ' + blue + ', ' + alpha + ')';
+                var pos     = { x: e.clientX, y: e.clientY }
+                    , img     = context.getImageData(e.clientX, e.clientY, 1, 1)
+                    , idata   = img.data
+                    , red     = idata[0]
+                    , green   = idata[1]
+                    , blue    = idata[2]
+                    , alpha   = idata[3];
+                
+                var rgba      = 'rgba(' + red + ', ' + green + ', ' + blue + ', ' + alpha + ')';
 
                 debugData["rgba"] = rgba;
             }
         });
 
-        eventEngine.sub(gameEngine.events.THE_LOOP, function(){
+        eventEngine.sub(gameEngine.events.RENDER_LOOP, function(){
             var shouldDebug = configEngine.get("shouldDebug");
             if( shouldDebug ) {
-                var canvas = gameEngine.getCanvas(),
-                    context = gameEngine.getContext();
                 if(new Date().getSeconds() !== seconds) {
                     // if the debug elem already exists, set it's HTML to our message
                     debugData["FPS"] = frames;
