@@ -1,4 +1,4 @@
-define(function() {
+define(function () {
     return {
         stances: {
             ready: 0,

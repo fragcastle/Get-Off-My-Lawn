@@ -20,7 +20,7 @@ require(
         "modules/builder.home",
         "modules/builder.trees"
     ],
-    function($, mapEngine, eventEngine, configEngine, assetLoader, gameEngine, debugEngine) {
+    function($, mapEngine, eventEngine, configEngine, assetLoader, gameEngine, util, debugEngine) {
         configEngine.set("shouldDebug", true);
 
         // create a list of the assets we want to load
@@ -60,7 +60,12 @@ require(
                     var length = enemies.length;
                     
                     for (var i = 0; i < length; i++) {
-                        enemies[i].index += currentMap.width;
+                        var potentialMove = util.random(mapEngine.getEligibleMoves(enemies[i].index));
+                        var tileType = currentMap.data[potentialMove];
+                        
+                        if (mapEngine.tileTypes[tileType].isWalkable) {
+                            enemies[i].index = potentialMove;
+                        }
                     }
                 });
             });

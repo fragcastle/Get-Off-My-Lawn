@@ -5,7 +5,7 @@ define(
     var context = canvas.getContext('2d');
     
     var frameCount = 3;
-    var msPerFrame = 150;
+    var msPerFrame = 400;
     
     var currentFrame = 0;
     var lastFrameChange = Date.now();
