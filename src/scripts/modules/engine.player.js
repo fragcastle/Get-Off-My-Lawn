@@ -14,6 +14,24 @@ define(function () {
         orientations: {
             left: 0,
             right: 1
-        }
+        },
+        translatePosition: function(canvas, tileSize, row, col, entity) {
+            var pos = {
+                x: ((row - col) * tileSize.height) + Math.floor((canvas.width / 2) - (tileSize.width / 2)),
+                y: Math.floor( (row + col) * (tileSize.height / 2) )
+            };
+
+            if (entity) {
+                if (entity.width != tileSize.width) {
+                    pos.x += tileSize.width / 2 - entity.width / 2;
+                }
+
+                if (entity.height != tileSize.height) {
+                    pos.y -= entity.height - tileSize.height / 2;
+                }
+            }
+
+            return pos;
+        },
     };
 });

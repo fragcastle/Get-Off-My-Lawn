@@ -6,9 +6,10 @@ define(
         'modules/loader.assets',
         'modules/engine.player',
         'modules/engine.debug',
+        'modules/engine.enemy',
         'http://localhost:8000/maps.json?callback=define'
     ],
-    function (eventEngine, gameEngine, util, assetLoader, playerEngine, debugEngine, mapSet) {
+    function (eventEngine, gameEngine, util, assetLoader, playerEngine, debugEngine, enemyEngine, mapSet) {
         var maps = mapSet, _currentMap = null;
         return {
             _getElligibleEvents: function() {
@@ -84,8 +85,6 @@ define(
                 if (index < mapSize - mapWidth - 1)
                     moves.push(index + mapWidth);
 
-                console.log(index);
-                console.log(moves);
                 return moves;
             },
             translatePosition: function(row, col, entity) {
@@ -103,26 +102,6 @@ define(
 
                     if (entity.height != tile.height) {
                         pos.y -= entity.height - tile.height;
-                    }
-                }
-
-                return pos;
-            },
-            translatePositionEntity: function(row, col, entity) {
-                var tile    = _currentMap.tileDimensions;
-                var canvas  = gameEngine.getCanvas();
-                var pos = {
-                    x: ((row - col) * tile.height) + Math.floor((canvas.width / 2) - (tile.width / 2)),
-                    y: Math.floor( (row + col) * (tile.height / 2) )
-                };
-
-                if (entity) {
-                    if (entity.width != tile.width) {
-                        pos.x += tile.width / 2 - entity.width / 2;
-                    }
-
-                    if (entity.height != tile.height) {
-                        pos.y -= entity.height - tile.height / 2;
                     }
                 }
 
@@ -166,53 +145,10 @@ define(
                     var enemies = _currentMap.enemies;
                     var enemyCount = enemies.length;
 
-
-                    for (var i = 0; i < enemyCount; i++) {
+                    //for (var i = 0, length = enemies.length; i < length; i++) {
+                    for (var i = enemies.length - 1; i > -1; i--) {
                         if (enemies[i].index === index) {
-                            var enemy = enemies[i];
-                            var stances = playerEngine.stances;
-                            var stance;
-                            var pos;
-
-                            if (enemy.stance === stances.ready) {
-                                stance = enemy.enemyTemplate.ready;
-                            } else if (enemy.stance === stances.walk) {
-                                stance = enemy.enemyTemplate.walk;
-                            } else if (enemy.stance === stances.jump) {
-                                stance = enemy.enemyTemplate.jump;
-                            } else if (enemy.stance === stances.flinch) {
-                                stance = enemy.enemyTemplate.flinch;
-                            } else if (enemy.stance === stances.swing) {
-                                stance = enemy.enemyTemplate.swing;
-                            } else if (enemy.stance === stances.kick) {
-                                stance = enemy.enemyTemplate.kick;
-                            } else if (enemy.stance === stances.jumpswing) {
-                                stance = enemy.enemyTemplate.jumpswing;
-                            } else if (enemy.stance === stances.jumpkick) {
-                                stance = enemy.enemyTemplate.jumpkick;
-                            } else if (enemy.stance === stances.dizzy) {
-                                stance = enemy.enemyTemplate.dizzy;
-                            }
-
-                            var frameChange = gameEngine.getCurrentFrame() * enemy.enemyTemplate.size.width;
-
-                            if (enemy.orientation === playerEngine.orientations.left) {
-                                context.save();
-                                context.translate(tilePos.x + 80, tilePos.y - 40);
-                                context.scale(-1, 1);
-
-                                pos = { x: 0, y: 0 };
-                            } else {
-                                pos = this.translatePositionEntity(row, col, enemy.enemyTemplate.size);
-                            }
-
-                            // Image, image x, image y, image width, image height, map x, map y, map width, map height
-                            context.drawImage(enemy.enemyTemplate.image, stance.x + frameChange, stance.y, enemy.enemyTemplate.size.width, enemy.enemyTemplate.size.height, pos.x, pos.y, enemy.enemyTemplate.size.width, enemy.enemyTemplate.size.height);
-
-                            if (enemy.orientation === playerEngine.orientations.left) {
-                                context.restore();
-                            }
-                            break;
+                            enemyEngine.enemyAction(canvas, context, _currentMap.tileDimensions, enemies[i], row, col, tilePos, gameEngine.getCurrentFrame());
                         }
                     }
                 });

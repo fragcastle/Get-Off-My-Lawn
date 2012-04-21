@@ -18,7 +18,8 @@ require(
         "modules/engine.util",
         "modules/engine.debug",
         "modules/builder.home",
-        "modules/builder.trees"
+        "modules/builder.trees",
+        "modules/engine.enemy"
     ],
     function($, mapEngine, eventEngine, configEngine, assetLoader, gameEngine, util, debugEngine) {
         configEngine.set("shouldDebug", true);
