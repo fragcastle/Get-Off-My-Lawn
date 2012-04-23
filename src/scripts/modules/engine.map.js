@@ -4,11 +4,11 @@ define(
         'modules/engine.game',
         'modules/engine.util',
         'modules/loader.assets',
-        'modules/engine.player',
         'modules/engine.debug',
-        'http://localhost:8000/maps.json?callback=define'
+        'http://localhost:8000/maps.json?callback=define',
+        'modules/factory.enemy'
     ],
-    function (eventEngine, gameEngine, util, assetLoader, playerEngine, debugEngine, mapSet) {
+    function (eventEngine, gameEngine, util, assetLoader, debugEngine, mapSet, enemyFactory) {
         var maps = mapSet, _currentMap = null;
         return {
             _getElligibleEvents: function() {
@@ -31,25 +31,20 @@ define(
                 _currentMap = maps[name] || _currentMap;
 
                 var spawnData = _currentMap.spawnData;
-                var length = _currentMap.enemyTemplates.length;
-                var enemyTemplates = _currentMap.enemyTemplates;
-                var enemies = _currentMap.enemies;
-
-                var mapSize = _currentMap.width * _currentMap.width;
+                    length = enemyFactory.enemies.length,
+                    enemyTemplates = enemyFactory.enemies,
+                    enemies = _currentMap.enemies,
+                    mapSize = _currentMap.width * _currentMap.width;
 
                 for (var i = 0; i < mapSize; i++) {
                     if (spawnData[i] > 0 && util.propability(_currentMap.enemyFactor)) {
                         var enemyIndex = Math.floor(Math.random() * length);
+                        var enemyTemplate = enemyFactory.enemies[enemyIndex];
 
+                        // load the asset into the template
                         enemyTemplates[enemyIndex].image = assetLoader.getAsset(enemyTemplates[enemyIndex].imagePath);
 
-                        var enemy = {
-                            index: i,
-                            enemyTemplate: enemyTemplates[enemyIndex],
-                            life: 20,
-                            stance: util.random(playerEngine.stances),
-                            orientation: util.random(playerEngine.orientations)
-                        };
+                        var enemy = enemyFactory.new(enemyTemplate.name);
 
                         enemies.push(enemy);
                     }
@@ -84,8 +79,6 @@ define(
                 if (index < mapSize - mapWidth - 1)
                     moves.push(index + mapWidth);
 
-                console.log(index);
-                console.log(moves);
                 return moves;
             },
             translatePosition: function(row, col, entity) {
@@ -103,26 +96,6 @@ define(
 
                     if (entity.height != tile.height) {
                         pos.y -= entity.height - tile.height;
-                    }
-                }
-
-                return pos;
-            },
-            translatePositionEntity: function(row, col, entity) {
-                var tile    = _currentMap.tileDimensions;
-                var canvas  = gameEngine.getCanvas();
-                var pos = {
-                    x: ((row - col) * tile.height) + Math.floor((canvas.width / 2) - (tile.width / 2)),
-                    y: Math.floor( (row + col) * (tile.height / 2) )
-                };
-
-                if (entity) {
-                    if (entity.width != tile.width) {
-                        pos.x += tile.width / 2 - entity.width / 2;
-                    }
-
-                    if (entity.height != tile.height) {
-                        pos.y -= entity.height - tile.height / 2;
                     }
                 }
 
@@ -166,53 +139,9 @@ define(
                     var enemies = _currentMap.enemies;
                     var enemyCount = enemies.length;
 
-
-                    for (var i = 0; i < enemyCount; i++) {
+                    for (var i = enemies.length - 1; i > -1; i--) {
                         if (enemies[i].index === index) {
-                            var enemy = enemies[i];
-                            var stances = playerEngine.stances;
-                            var stance;
-                            var pos;
-
-                            if (enemy.stance === stances.ready) {
-                                stance = enemy.enemyTemplate.ready;
-                            } else if (enemy.stance === stances.walk) {
-                                stance = enemy.enemyTemplate.walk;
-                            } else if (enemy.stance === stances.jump) {
-                                stance = enemy.enemyTemplate.jump;
-                            } else if (enemy.stance === stances.flinch) {
-                                stance = enemy.enemyTemplate.flinch;
-                            } else if (enemy.stance === stances.swing) {
-                                stance = enemy.enemyTemplate.swing;
-                            } else if (enemy.stance === stances.kick) {
-                                stance = enemy.enemyTemplate.kick;
-                            } else if (enemy.stance === stances.jumpswing) {
-                                stance = enemy.enemyTemplate.jumpswing;
-                            } else if (enemy.stance === stances.jumpkick) {
-                                stance = enemy.enemyTemplate.jumpkick;
-                            } else if (enemy.stance === stances.dizzy) {
-                                stance = enemy.enemyTemplate.dizzy;
-                            }
-
-                            var frameChange = gameEngine.getCurrentFrame() * enemy.enemyTemplate.size.width;
-
-                            if (enemy.orientation === playerEngine.orientations.left) {
-                                context.save();
-                                context.translate(tilePos.x + 80, tilePos.y - 40);
-                                context.scale(-1, 1);
-
-                                pos = { x: 0, y: 0 };
-                            } else {
-                                pos = this.translatePositionEntity(row, col, enemy.enemyTemplate.size);
-                            }
-
-                            // Image, image x, image y, image width, image height, map x, map y, map width, map height
-                            context.drawImage(enemy.enemyTemplate.image, stance.x + frameChange, stance.y, enemy.enemyTemplate.size.width, enemy.enemyTemplate.size.height, pos.x, pos.y, enemy.enemyTemplate.size.width, enemy.enemyTemplate.size.height);
-
-                            if (enemy.orientation === playerEngine.orientations.left) {
-                                context.restore();
-                            }
-                            break;
+                            enemyEngine.enemyAction(canvas, context, _currentMap.tileDimensions, enemies[i], row, col, tilePos, gameEngine.getCurrentFrame());
                         }
                     }
                 });

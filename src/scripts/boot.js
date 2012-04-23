@@ -18,12 +18,17 @@ require(
         "modules/engine.util",
         "modules/engine.debug",
         "modules/builder.home",
-        "modules/builder.trees"
+        "modules/builder.trees",
+        "modules/factory.enemy",
+        "modules/engine.enemy", // doesn't create an object it just sets up event listeners
     ],
-    function($, mapEngine, eventEngine, configEngine, assetLoader, gameEngine, util, debugEngine) {
+    function($, mapEngine, eventEngine, configEngine, assetLoader, gameEngine, util, debugEngine, enemyFactory) {
         configEngine.set("shouldDebug", true);
 
         // create a list of the assets we want to load
+        // TODO: we should probably move this logic out to the specific
+        // json scripts that we load. Like maps and enemies
+        // so that they can tell the assetLoader to load them?
         var assets = [
             "images/grass.png",
             "images/dirt.png",
@@ -51,20 +56,20 @@ require(
             eventEngine.sub(assetLoader.events.ALL_ASSETS_LOADED, function(e) {
                 $("#loaderProgress").hide();
                 mapEngine.setCurrentLevel("levelOne");
-                
+
                 eventEngine.sub(gameEngine.events.RENDER_LOOP, function (e) {
                     mapEngine.renderTo(gameEngine.getCanvas(), gameEngine.getContext());
                 });
-                
+
                 eventEngine.sub(gameEngine.events.GAME_LOOP, function (e) {
                     var currentMap = mapEngine.getCurrentMap();
                     var enemies = currentMap.enemies;
                     var length = enemies.length;
-                    
+
                     for (var i = 0; i < length; i++) {
                         var potentialMove = util.random(mapEngine.getEligibleMoves(enemies[i].index));
                         var tileType = currentMap.data[potentialMove];
-                        
+
                         if (mapEngine.tileTypes[tileType].isWalkable) {
                             enemies[i].index = potentialMove;
                         }
@@ -80,5 +85,8 @@ require(
             // prep the assetLoader and start downloading
             assetLoader.queueAssets(assets);
             assetLoader.downloadAll();
+
+            // publish the boot event
+            eventEngine.pub("boot", this);
         });
     });

@@ -11,11 +11,13 @@ var express     = require('express'),
     app         = express.createServer(),
     io          = require('socket.io').listen(app),
     maps        = require('./maps'),
+    enemies     = require('./enemies'),
     config      = {
                       routes:{
                           index: "/",
                           config: "/config.:format?",
-                          maps: "/maps/:id?.:format?"
+                          maps: "/maps/:id?.:format?",
+                          enemies: "/enemies/:id?.:format?"
                       }
                   };
 
@@ -56,6 +58,28 @@ app.get(config.routes.maps, function(req, res) {
           };
 
       json = JSON.stringify( req.params.id ? maps[req.params.id] : maps );
+
+      res.send( callback_name ? jsonp(json) : json );
+    }
+  };
+
+  response_for[req.params.format]();
+});
+
+app.get(config.routes.enemies, function(req, res) {
+  req.params.format = req.params.format || "html";
+  var response_for = {
+    "html": function() {
+      res.render("enemies/index.jade", maps);
+    },
+    "json": function() {
+      var callback_name = req.query.callback,
+          json = "",
+          jsonp = function(json){
+            return callback_name + "(" + json + ")";
+          };
+
+      json = JSON.stringify( req.params.id ? enemies[req.params.id] : enemies );
 
       res.send( callback_name ? jsonp(json) : json );
     }
