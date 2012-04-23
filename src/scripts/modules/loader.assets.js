@@ -30,6 +30,7 @@ define(
                 },
                 parent = this,
                 signalAllAssetsLoaded = function(){
+                    debugEngine.log('All assets loaded.');
                     eventEngine.pub(parent.events.ALL_ASSETS_LOADED, this, [downloadQueue]);
                 };
 
@@ -74,6 +75,9 @@ define(
                         function onSuccess(e, img) {
                             counter.successes++;
                             var args = [ counter.sum(), img.src, "ok", e ];
+
+                            debugEngine.log('Loaded image:');
+                            debugEngine.log(img);
 
                             eventEngine.pub(manager.events.ASSET_LOAD, manager, args);
                             if( manager.doneYet() ) {

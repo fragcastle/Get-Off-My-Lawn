@@ -1,0 +1,10 @@
+{
+  "name": "get-off-my-lawn",
+  "version": "0.0.1",
+  "dependencies": {
+    "express": "2.5.8",
+    "connect": "1.8.6",
+    "jade": "0.24.x",
+    "socket.io": "0.9.x"
+  }
+}

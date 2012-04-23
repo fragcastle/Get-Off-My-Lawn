@@ -1,12 +1,24 @@
-define(["modules/engine.events", "jquery"], function(eventEngine, $) {
+define(
+    ["modules/engine.events", "modules/engine.util", "jquery"], 
+    function(eventEngine, util, $) {
     var canvas = document.getElementById('theCanvas');
     var context = canvas.getContext('2d');
-
+    
+    var frameCount = 3;
+    var msPerFrame = 400;
+    
+    var currentFrame = 0;
+    var lastFrameChange = Date.now();
+    
     canvas.addEventListener('mousedown', function(e){
         // pass the event off to any listeners
         eventEngine.pub("mouseDown", this, [canvas, context, e]);
     }, false);
-
+    
+    document.onkeypress = function(e) {
+        eventEngine.pub("keyPress", this, [canvas, context, e]);
+    };
+    
     canvas.addEventListener("mousemove", function(e){
         eventEngine.pub("mouseMove", this, [canvas, context, e]);
     }, false);
@@ -23,15 +35,49 @@ define(["modules/engine.events", "jquery"], function(eventEngine, $) {
             width: document.body.clientWidth
         }]);
     });
+    
+    window.requestAnimFrame = (function(callback) {
+        return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function(callback) {
+            window.setTimeout(callback, 1000 / 60);
+        };
+    })();
 
-    var _loopTimer = null;
-    $(function theLoop() {
-        _loopTimer = setInterval(function(){
-            eventEngine.pub("theLoop");
-        }, 1);
-    });
+    var renderLoop = function () {
+        requestAnimFrame(function() {    
+            renderLoop();
+        });
+        
+        var delta = Date.now() - lastFrameChange;
+        
+        if (delta > msPerFrame) {
+            lastFrameChange = Date.now();
+            currentFrame++;
+            
+            if (currentFrame === 3)
+                currentFrame = 0;
+        }
+        
+        eventEngine.pub("renderLoop");
+    }
+    
+    var gameLoop = function () {
+        eventEngine.pub("gameLoop");
+        
+        window.setTimeout(gameLoop, 2000);
+    }
+    
+    $(renderLoop);
+    $(gameLoop);
 
     return {
+        getCurrentFrame: function() {
+            return currentFrame;
+        },
         getCanvas: function() {
             return canvas;
         },
@@ -40,9 +86,11 @@ define(["modules/engine.events", "jquery"], function(eventEngine, $) {
         },
         events: {
             MOUSE_DOWN: "mouseDown",
-            THE_LOOP: "theLoop",
+            RENDER_LOOP: "renderLoop",
+            GAME_LOOP: "gameLoop",
             RESIZE: "resize",
-            MOUSE_MOVE: "mouseMove"
+            MOUSE_MOVE: "mouseMove",
+            KEY_PRESS: "keyPress"
         }
     };
 });

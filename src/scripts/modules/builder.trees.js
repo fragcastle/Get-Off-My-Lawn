@@ -30,17 +30,12 @@ require(
         }
         
         eventEngine.sub(mapEngine.events.LEVEL_LOADED, function() {
-            debugEngine.log("LOAD_COMPLETE - treeBuilder");
-
             _tree = assetLoader.getAsset("images/tree.png");
             _treePositions = randomNumbers( mapEngine.getCurrentMap().treeFactor * 100 );
         });
         
         eventEngine.sub(mapEngine.events.BUILDING_RENDER, function(index, row, col) {
-            debugEngine.log("BUILDING_RENDER - treeBuilder");
-            
             var context = gameEngine.getContext();
-            
             if (inArray(_treePositions, index)) {
                 var pos = mapEngine.translatePosition(row, col, _tree);
                 context.drawImage(_tree, pos.x, pos.y, _tree.width, _tree.height);
