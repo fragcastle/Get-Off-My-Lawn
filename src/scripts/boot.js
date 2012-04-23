@@ -60,21 +60,6 @@ require(
                 eventEngine.sub(gameEngine.events.RENDER_LOOP, function (e) {
                     mapEngine.renderTo(gameEngine.getCanvas(), gameEngine.getContext());
                 });
-
-                eventEngine.sub(gameEngine.events.GAME_LOOP, function (e) {
-                    var currentMap = mapEngine.getCurrentMap();
-                    var enemies = currentMap.enemies;
-                    var length = enemies.length;
-
-                    for (var i = 0; i < length; i++) {
-                        var potentialMove = util.random(mapEngine.getEligibleMoves(enemies[i].index));
-                        var tileType = currentMap.data[potentialMove];
-
-                        if (mapEngine.tileTypes[tileType].isWalkable) {
-                            enemies[i].index = potentialMove;
-                        }
-                    }
-                });
             });
 
             eventEngine.sub(assetLoader.events.ASSET_LOAD, function(itemCount) {

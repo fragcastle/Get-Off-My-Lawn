@@ -28,6 +28,7 @@ define(
                 return _currentMap;
             },
             setCurrentLevel: function(name) {
+                debugEngine.log('Loading level...');
                 _currentMap = maps[name] || _currentMap;
 
                 var spawnData = _currentMap.spawnData;
@@ -50,6 +51,7 @@ define(
                     }
                 }
 
+                debugEngine.log('Done loading level.');
                 eventEngine.pub(this.events.LEVEL_LOADED);
                 return this; // for chaining
             },
@@ -70,7 +72,7 @@ define(
                 var mapWidth = _currentMap.width;
                 var mapSize = mapWidth * mapWidth;
 
-                if ((index < 0) && (index % mapWidth !== 0))
+                if ((index > 0) && (index % mapWidth !== 0))
                     moves.push(index - 1);
                 if ((index - 1 < mapSize) && ((index + 1) % mapWidth !== 0))
                     moves.push(index + 1);

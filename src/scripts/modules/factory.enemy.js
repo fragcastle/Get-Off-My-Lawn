@@ -55,9 +55,6 @@ define([
                     pos = util.translatePosition(canvas, tileDimensions, row, col, this.template.size);
                 }
 
-                debugEngine.log(this.frame);
-                debugEngine.log(actionFrame);
-
                 // Image, image x, image y, image width, image height, map x, map y, map width, map height
                 context.drawImage(this.template.image, actionFrame.x + frameChange, actionFrame.y, this.template.size.width, this.template.size.height, pos.x, pos.y, this.template.size.width, this.template.size.height);
 
