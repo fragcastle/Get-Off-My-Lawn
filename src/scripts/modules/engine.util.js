@@ -24,7 +24,7 @@ define(function() {
             
             return [];
         },
-        propability: function (factor) {
+        probability: function (factor) {
             var randomNumber = Math.floor(Math.random() * 100);
             return (randomNumber < factor * 100);
         }

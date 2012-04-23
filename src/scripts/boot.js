@@ -2,10 +2,10 @@
 // does all of the things... on boot
 //
 requirejs.config({
-  paths: {
-    'jquery' : 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min'
-  },
-  urlArgs: "bust=" + (new Date()).getTime()
+    paths: {
+        'jquery' : 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min'
+    },
+    urlArgs: "bust=" + (new Date()).getTime()
 });
 require(
     [
@@ -15,13 +15,14 @@ require(
         "modules/engine.config",
         "modules/loader.assets",
         "modules/engine.game",
+        "modules/engine.player",
         "modules/engine.util",
         "modules/engine.debug",
         "modules/builder.home",
         "modules/builder.trees",
         "modules/engine.enemy"
     ],
-    function($, mapEngine, eventEngine, configEngine, assetLoader, gameEngine, util, debugEngine) {
+    function($, mapEngine, eventEngine, configEngine, assetLoader, gameEngine, playerEngine, util, debugEngine) {
         configEngine.set("shouldDebug", true);
 
         // create a list of the assets we want to load
@@ -37,7 +38,8 @@ require(
             "images/droid_from_android.png",
             "images/sara_from_opengameart.png",
             "images/tux_from_linux.png",
-            "images/wilber_from_gimp_0.png"
+            "images/wilber_from_gimp_0.png",
+            "images/bullet.png"
         ];
 
         $(function () {
@@ -60,14 +62,24 @@ require(
                 eventEngine.sub(gameEngine.events.GAME_LOOP, function (e) {
                     var currentMap = mapEngine.getCurrentMap();
                     var enemies = currentMap.enemies;
+                    var bullets = currentMap.bullets;
                     var length = enemies.length;
                     
                     for (var i = 0; i < length; i++) {
+                        var enemy = enemies[i];
                         var potentialMove = util.random(mapEngine.getEligibleMoves(enemies[i].index));
                         var tileType = currentMap.data[potentialMove];
                         
                         if (mapEngine.tileTypes[tileType].isWalkable) {
-                            enemies[i].index = potentialMove;
+                            enemy.index = potentialMove;
+                        }
+                        
+                        if (util.probability(5)) {
+                            bullets.push({
+                                startTime: Date.now(),
+                                sourcePoint: playerEngine.translatePosition(gameEngine.getCanvas(), currentMap.tileDimensions, enemy.row, enemy.col, enemy.enemyTemplate.size),
+                                targetPoint: currentMap.entities.home
+                            });
                         }
                     }
                 });

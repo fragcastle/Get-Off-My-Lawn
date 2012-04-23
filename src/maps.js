@@ -10,6 +10,7 @@ var maps = { // should load maps from server
         treeFactor: .05,
         enemyFactor: 0.5,
         enemies: [],
+        bullets: [],
         enemyTemplates: [
             {
                 name: 'Kit',

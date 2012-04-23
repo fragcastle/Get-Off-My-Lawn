@@ -39,7 +39,7 @@ define(
                 var mapSize = _currentMap.width * _currentMap.width;
 
                 for (var i = 0; i < mapSize; i++) {
-                    if (spawnData[i] > 0 && util.propability(_currentMap.enemyFactor)) {
+                    if (spawnData[i] > 0 && util.probability(_currentMap.enemyFactor)) {
                         var enemyIndex = Math.floor(Math.random() * length);
 
                         enemyTemplates[enemyIndex].image = assetLoader.getAsset(enemyTemplates[enemyIndex].imagePath);
@@ -48,7 +48,7 @@ define(
                             index: i,
                             enemyTemplate: enemyTemplates[enemyIndex],
                             life: 20,
-                            stance: util.random(playerEngine.stances),
+                            stance: playerEngine.stances.ready,
                             orientation: util.random(playerEngine.orientations)
                         };
 
@@ -110,6 +110,17 @@ define(
             rowColToIndex: function(row, col) {
                 return (row * _currentMap.width + col);
             },
+            rowColToPoint: function(row, col) {
+                var tile    = _currentMap.tileDimensions;
+                var canvas  = gameEngine.getCanvas();
+                
+                var point = {
+                    x: ((row - col) * tile.height) + Math.floor((canvas.width / 2) - (tile.width / 2)),
+                    y: Math.floor( (row + col) * (tile.height / 2) )
+                };
+                
+                return point;
+            },
             tileLoop: function(fn) {
                 var index = 0;
 
@@ -143,13 +154,22 @@ define(
                     eventEngine.pub(this.events.EFFECT_RENDER, this, [index, row, col, tilePos]);
 
                     var enemies = _currentMap.enemies;
-                    var enemyCount = enemies.length;
+                    var bullets = _currentMap.bullets;
 
                     //for (var i = 0, length = enemies.length; i < length; i++) {
                     for (var i = enemies.length - 1; i > -1; i--) {
                         if (enemies[i].index === index) {
                             enemyEngine.enemyAction(canvas, context, _currentMap.tileDimensions, enemies[i], row, col, tilePos, gameEngine.getCurrentFrame());
                         }
+                    }
+                    
+                    for (var i = bullets.length - 1; i > -1; i--) {
+                        var bullet = assetLoader.getAsset('images/bullet.png');
+                        var timeElapsed = Date.now() - bullet.startTime;
+                        
+                        var targetPoint = this.rowColToPoint(_currentMap.entities.home.row, _currentMap.entities.home.col);
+                        
+                        context.drawImage(bullet, targetPoint.x, targetPoint.y, bullet.width, bullet.height);
                     }
                 });
 
