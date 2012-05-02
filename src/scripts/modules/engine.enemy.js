@@ -1,13 +1,13 @@
 require(
   [
-    "modules/engine.events",
-    "modules/engine.map",
-    "modules/factory.enemy",
-    "modules/engine.util"
+    'modules/engine.events',
+    'modules/engine.map',
+    'modules/factory.enemy',
+    'modules/engine.util'
   ],
   function(eventEngine, mapEngine, enemyFactory, util) {
-      eventEngine.sub("allAssetsLoaded", function(e) {
-          eventEngine.sub("gameLoop", function (e) {
+      eventEngine.sub('allAssetsLoaded', function(e) {
+          eventEngine.sub('gameLoop', function (e) {
               var currentMap = mapEngine.getCurrentMap();
               var enemies = currentMap.enemies;
               var length = enemies.length;

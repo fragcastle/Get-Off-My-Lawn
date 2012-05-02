@@ -1,8 +1,8 @@
 require(
-    ["modules/engine.map"
-     , "modules/engine.events"
-     , "modules/engine.game"
-     , "modules/engine.util"
+    ['modules/engine.map'
+     , 'modules/engine.events'
+     , 'modules/engine.game'
+     , 'modules/engine.util'
      , 'modules/engine.debug'],
     function(mapEngine, eventEngine, gameEngine, util, debugEngine) {
         var _home, _homeImage;

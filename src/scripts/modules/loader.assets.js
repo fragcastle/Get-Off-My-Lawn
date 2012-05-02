@@ -1,7 +1,7 @@
 define(
     [
-        "modules/engine.events",
-        "modules/engine.debug"
+        'modules/engine.events',
+        'modules/engine.debug'
     ],
     function(eventEngine, debugEngine) {
         var ProgressBar = function(parent, min, max){
@@ -47,7 +47,7 @@ define(
             };
 
             this.downloadAll = function() {
-                debugEngine.log("starting download");
+                debugEngine.log('starting download');
                 if (downloadQueue.length === 0) {
                     signalAllAssetsLoaded();
                 }
@@ -57,14 +57,14 @@ define(
                         manager = this,
                         counter = counts;
 
-                    debugEngine.log("downloading " + path);
+                    debugEngine.log('downloading ' + path);
 
                     function downloadImage(src, successCallback, failCallback) {
                         var image = new Image();
-                        image.addEventListener("load", function(e) {
+                        image.addEventListener('load', function(e) {
                             successCallback(e, image);
                         }, false);
-                        image.addEventListener("error", function(e) {
+                        image.addEventListener('error', function(e) {
                             failCallback(e, image);
                         }, false);
                         image.src = src;
@@ -74,7 +74,7 @@ define(
                     cache[path] = downloadImage(path,
                         function onSuccess(e, img) {
                             counter.successes++;
-                            var args = [ counter.sum(), img.src, "ok", e ];
+                            var args = [ counter.sum(), img.src, 'ok', e ];
 
                             debugEngine.log('Loaded image:');
                             debugEngine.log(img);
@@ -86,7 +86,7 @@ define(
                         },
                         function onFail(e, img) {
                             counter.fails++;
-                            var args = [ counter.sum(), img.src, "fail", e ];
+                            var args = [ counter.sum(), img.src, 'fail', e ];
 
                             eventEngine.pub(manager.events.ASSET_LOAD, manager, args);
                             if( manager.doneYet() ) {
@@ -105,8 +105,8 @@ define(
             };
 
             this.events = {
-                ASSET_LOAD: "assetLoad",
-                ALL_ASSETS_LOADED: "allAssetsLoaded"
+                ASSET_LOAD: 'assetLoad',
+                ALL_ASSETS_LOADED: 'allAssetsLoaded'
             };
         };
         return new AssetManager();

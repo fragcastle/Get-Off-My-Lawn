@@ -1,7 +1,7 @@
 define(
     [
-        "modules/engine.events",
-        "jquery"
+        'modules/engine.events',
+        'jquery'
     ],
     function(eventEngine, $){
         var _settings = {};
@@ -17,13 +17,13 @@ define(
             pull: function(url) {
                 $.get(url, function(data){
                     _settings = $.merge(data, _settings);
-                }, "json");
+                }, 'json');
                 eventEngine.pub(this.events.PULLED, this, [_settings]);
             },
             events: {
-                CHANGED: "settingChanged",
-                RETRIEVED: "settingRetrieved",
-                PULLED: "settingsPulled"
+                CHANGED: 'settingChanged',
+                RETRIEVED: 'settingRetrieved',
+                PULLED: 'settingsPulled'
             }
         };
     });

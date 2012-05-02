@@ -99,7 +99,7 @@ define(
                 context.translate(0, mapOffset);
 
                 this.tileLoop(function(row, col, index) {
-                    var img     = this.getTileImage(index)
+                    var img       = this.getTileImage(index)
                         , tilePos = util.rowColToPoint(canvas.width, _currentMap.tileDimensions, row, col);
 
                     context.drawImage(img, tilePos.x, tilePos.y, img.width, img.height);
@@ -111,7 +111,6 @@ define(
                     eventEngine.pub(this.events.EFFECT_RENDER, this, [index, row, col, tilePos]);
 
                     var enemies = _currentMap.enemies;
-                    var enemyCount = enemies.length;
 
                     for (var i = enemies.length - 1; i > -1; i--) {
                         if (enemies[i].index === index) {
@@ -143,35 +142,35 @@ define(
                 context.restore();
             },
             tileTypes: {
-                "G": {
+                'G': {
                     isBuildable: true,
                     isWalkable: true
                 },
-                "W": {
+                'W': {
                     isBuildable: false,
                     isWalkable: false
                 },
-                "S": {
+                'S': {
                     isBuildable: true,
                     isWalkable: false
                 },
-                "D": {
+                'D': {
                     isBuildable: true,
                     isWalkable: true
                 },
-                "F": {
+                'F': {
                     isBuildable: true,
                     isWalkable: false
                 }
             },
             events: {
-                LEVEL_LOADED: "levelLoaded",
+                LEVEL_LOADED: 'levelLoaded',
 
-                TILE_RENDER: "tileRender",
-                BUILDING_RENDER: "buildingRender",
-                DEFENSE_RENDER: "defenseRender",
-                PLAYER_RENDER: "playerRender",
-                EFFECT_RENDER: "effectRender"
+                TILE_RENDER: 'tileRender',
+                BUILDING_RENDER: 'buildingRender',
+                DEFENSE_RENDER: 'defenseRender',
+                PLAYER_RENDER: 'playerRender',
+                EFFECT_RENDER: 'effectRender'
             }
         };
     });

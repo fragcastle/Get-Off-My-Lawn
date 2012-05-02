@@ -1,10 +1,10 @@
 require(
-    ["modules/engine.map"
-     , "modules/engine.events"
-     , "modules/engine.game"
-     , "modules/loader.assets"
-     , "modules/engine.util"
-     , "modules/engine.debug"
+    ['modules/engine.map'
+     , 'modules/engine.events'
+     , 'modules/engine.game'
+     , 'modules/loader.assets'
+     , 'modules/engine.util'
+     , 'modules/engine.debug'
      ],
     function(mapEngine, eventEngine, gameEngine, assetLoader, util, debugEngine) {
         var _tree, _treePositions;
@@ -36,7 +36,7 @@ require(
         }
 
         eventEngine.sub(mapEngine.events.LEVEL_LOADED, function() {
-            _tree = assetLoader.getAsset("images/tree.png");
+            _tree = assetLoader.getAsset('images/tree.png');
             _treePositions = randomNumbers( mapEngine.getCurrentMap().treeFactor * 100 );
         });
 

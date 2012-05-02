@@ -1,20 +1,20 @@
 define([
-      "modules/loader.assets",
-      "modules/engine.util",
-      "http://localhost:8000/enemies.json?callback=define",
-      "modules/engine.debug"
+      'modules/loader.assets',
+      'modules/engine.util',
+      'http://localhost:8000/enemies.json?callback=define',
+      'modules/engine.debug'
     ],
     function(assetLoader, util, enemiesJson, debugEngine){
       var keyFrames = {
-          ready: "ready",
-          walk: "walk",
-          jump: "jump",
-          flinch: "flinch",
-          swing: "swing",
-          kick: "kick",
-          jumpswing: "jumpswing",
-          jumpkick: "jumpkick",
-          dizzy: "dizzy"
+          ready: 'ready',
+          walk: 'walk',
+          jump: 'jump',
+          flinch: 'flinch',
+          swing: 'swing',
+          kick: 'kick',
+          jumpswing: 'jumpswing',
+          jumpkick: 'jumpkick',
+          dizzy: 'dizzy'
       };
       var orientations = { left: 0, right: 1 };
 

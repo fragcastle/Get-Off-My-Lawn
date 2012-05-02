@@ -10,7 +10,7 @@ define(function() {
                 var randomIndex = Math.floor(Math.random() * length);
 
                 return object[randomIndex];
-            } else if (typeof object == "object") {
+            } else if (typeof object == 'object') {
                 var properties = [];
 
                 for (var propertyName in object) {

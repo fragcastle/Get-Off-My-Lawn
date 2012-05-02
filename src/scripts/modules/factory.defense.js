@@ -1,11 +1,11 @@
 define(
     [
-    'modules/engine.game',
-    'modules/engine.map',
-    'modules/engine.events',
-    'modules/loader.assets',
-    'modules/engine.util',
-    'modules/engine.debug',
+    'modules/engine.game'
+    , 'modules/engine.map'
+    , 'modules/engine.events'
+    , 'modules/loader.assets'
+    , 'modules/engine.util'
+    , 'modules/engine.debug'
     ],
     function (gameEngine, mapEngine, eventEngine, assetLoader, util, debugEngine) {
         eventEngine.sub(gameEngine.events.MOUSE_DOWN, function(canvas, context, e) {
