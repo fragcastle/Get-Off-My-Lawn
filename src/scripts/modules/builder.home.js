@@ -20,7 +20,7 @@ require(
                 var map = mapEngine.getCurrentMap();
 
                 // center the image within the tile
-                var homePosition = util.entityRowColToPoint(canvas.width, map.tileDimensions, _home.row, _home.col, _homeImage);
+                var homePosition = util.entityRowColToPoint(canvas.width, map.tileDimensions, _home.row, _home.col, _homeImage, true);
 
                 var context = gameEngine.getContext();
                 context.drawImage(_homeImage, homePosition.x, homePosition.y, _homeImage.width, _homeImage.height);

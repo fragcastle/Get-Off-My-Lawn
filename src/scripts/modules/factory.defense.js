@@ -49,6 +49,7 @@ define(
 
                             var missile = {
                                 index: this.index
+                                , damage: 15
                                 , pos: util.entityRowColToPoint(canvas.width, map.tileDimensions, rowCol.row, rowCol.col, this.missileImage)
                                 , target: this.currentTarget
                                 , image: this.missileImage
@@ -66,7 +67,7 @@ define(
                                     var targetPos = util.indexToPoint(canvas.width, map.width, map.tileDimensions, this.target.index);
 
                                     if (targetPos.x === this.pos.x && targetPos.y === this.pos.y ) {
-                                        this.target.life -= 15;
+                                        this.target.life -= this.damage;
 
                                         if (this.target.life <= 0) {
                                             for (var i = map.enemies.length - 1; i > -1; i--) {
@@ -99,13 +100,6 @@ define(
                             map.missiles.push(missile);
                         }
                     }
-
-                        //if (this.currentTarget && this.currentTarget.life > 0) {
-                        //    setTimeout(function () { defense.update(defense) }, this.rateOfFire);
-                        //} else {
-                        //    // No target acquired, try again
-                        //    setTimeout(function () {defense.update(defense) }, 500);
-                        //}
                 },
 
                 acquireTarget: function () {

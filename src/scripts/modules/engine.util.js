@@ -52,13 +52,23 @@ define(function() {
 
             return point;
         },
-        entityRowColToPoint: function(canvasWidth, tileSize, row, col, entity) {
+        entityRowColToPoint: function(canvasWidth, tileSize, row, col, entity, alignToBottom) {
+            alignToBottom = (typeof alignToBottom == "undefined") ? false : alignToBottom
+
             var pos = {
                 x: ((row - col) * tileSize.height) + Math.floor((canvasWidth / 2) - (tileSize.width / 2)),
                 y: Math.floor( (row + col) * (tileSize.height / 2) )
             };
 
-            if (entity) {
+            if (entity && alignToBottom) {
+                if (entity.width != tileSize.width) {
+                    pos.x += tileSize.width / 2 - entity.width / 2;
+                }
+
+                if (entity.height != tileSize.height) {
+                    pos.y -= entity.height - tileSize.height;
+                }
+            } else if (entity) {
                 if (entity.width != tileSize.width) {
                     pos.x += tileSize.width / 2 - entity.width / 2;
                 }
