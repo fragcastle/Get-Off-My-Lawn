@@ -2,10 +2,10 @@
 // does all of the things... on boot
 //
 requirejs.config({
-  paths: {
-    'jquery' : 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min'
-  },
-  urlArgs: "bust=" + (new Date()).getTime()
+    paths: {
+        'jquery' : 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min'
+    },
+    urlArgs: "bust=" + (new Date()).getTime()
 });
 require(
     [
@@ -17,12 +17,13 @@ require(
         "modules/engine.game",
         "modules/engine.util",
         "modules/engine.debug",
+        "modules/factory.enemy",
+        "modules/factory.defense",
         "modules/builder.home",
         "modules/builder.trees",
-        "modules/factory.enemy",
         "modules/engine.enemy", // doesn't create an object it just sets up event listeners
     ],
-    function($, mapEngine, eventEngine, configEngine, assetLoader, gameEngine, util, debugEngine, enemyFactory) {
+    function($, mapEngine, eventEngine, configEngine, assetLoader, gameEngine, util, debugEngine, enemyFactory, defenseFactory) {
         configEngine.set("shouldDebug", true);
 
         // create a list of the assets we want to load
@@ -41,16 +42,13 @@ require(
             "images/droid_from_android.png",
             "images/sara_from_opengameart.png",
             "images/tux_from_linux.png",
-            "images/wilber_from_gimp_0.png"
+            "images/wilber_from_gimp_0.png",
+            "images/missile.png",
+            "images/defense.png"
         ];
 
         $(function () {
             var progressBar = assetLoader.createProgressBar($('#loaderProgress')[0], 0, assets.length);
-
-            eventEngine.sub(gameEngine.events.MOUSE_DOWN, function(canvas, context, e) {
-                debugEngine.log("MOUSE DOWN");
-                debugEngine.log(e);
-            });
 
             // don't render until all the assets have been loaded
             eventEngine.sub(assetLoader.events.ALL_ASSETS_LOADED, function(e) {

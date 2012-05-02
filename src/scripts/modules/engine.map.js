@@ -9,7 +9,11 @@ define(
         'modules/factory.enemy'
     ],
     function (eventEngine, gameEngine, util, assetLoader, debugEngine, mapSet, enemyFactory) {
-        var maps = mapSet, _currentMap = null;
+        var maps = mapSet
+            , _currentMap = null
+            , missileImage = null
+            , mapOffset = 0;
+        
         return {
             _getElligibleEvents: function() {
                 var _e = [];
@@ -30,7 +34,7 @@ define(
             setCurrentLevel: function(name) {
                 debugEngine.log('Loading level...');
                 _currentMap = maps[name] || _currentMap;
-
+                
                 var spawnData = _currentMap.spawnData;
                     length = enemyFactory.enemies.length,
                     enemyTemplates = enemyFactory.enemies,
@@ -54,18 +58,6 @@ define(
                 debugEngine.log('Done loading level.');
                 eventEngine.pub(this.events.LEVEL_LOADED);
                 return this; // for chaining
-            },
-            getDataIndex: function( pos ) {
-                return ((pos.y/_currentMap.tileDimensions.height)*_currentMap.width) + (pos.x/_currentMap.tileDimensions.width);
-            },
-            getTileType: function( pos ) {
-                return _currentMap.data.substr( this.getDataIndex(pos), 1 );
-            },
-            getPosFromDataIndex: function(index) {
-                return {
-                    x: (index%_currentMap.width) * _currentMap.tileDimensions.width,
-                    y: ( index < _currentMap.width ? 0 : Math.floor(index / _currentMap.width) ) * _currentMap.tileDimensions.height
-                };
             },
             getEligibleMoves: function (index) {
                 var moves = [];
@@ -124,11 +116,11 @@ define(
             renderTo: function(canvas, context) {
                 context.clearRect (0, 0, canvas.width, canvas.height);
                 context.save();
-                context.translate(0, 100);
+                context.translate(0, mapOffset);
 
                 this.tileLoop(function(row, col, index) {
-                    var img     = this.getTileImage(index),
-                        tilePos = this.translatePosition( row, col );
+                    var img     = this.getTileImage(index)
+                        , tilePos = this.translatePosition( row, col );
 
                     context.drawImage(img, tilePos.x, tilePos.y, img.width, img.height);
 
@@ -145,6 +137,24 @@ define(
                         if (enemies[i].index === index) {
                             var enemy = enemies[i];
                             enemy.move(canvas, context, _currentMap.tileDimensions, row, col, tilePos, gameEngine.getCurrentFrame());
+                        }
+                    }
+                    
+                    var defenses = _currentMap.defenses;
+                    var defenseImage = assetLoader.getAsset('images/defense.png');
+
+                    for (var i = defenses.length - 1; i > -1; i--) {
+                        if (defenses[i].index === index) {
+                            context.drawImage(defenseImage, tilePos.x, tilePos.y, defenseImage.width, defenseImage.height);
+                        }
+                    }
+
+                    var missiles = _currentMap.missiles;
+                    var missileImage = assetLoader.getAsset('images/missile.png');
+
+                    for (var i = missiles.length - 1; i > -1; i--) {
+                        if (missiles[i].index === index) {
+                            context.drawImage(missileImage, missiles[i].pos.x, missiles[i].pos.y, missileImage.width, missileImage.height);
                         }
                     }
                 });

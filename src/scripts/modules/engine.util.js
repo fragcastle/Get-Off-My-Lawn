@@ -25,7 +25,7 @@ define(function() {
                 return properties[randomIndex];
             }
 
-            return [];
+            return null;
         },
         propability: function (factor) {
             var randomNumber = Math.floor(Math.random() * 100);
@@ -49,5 +49,21 @@ define(function() {
 
             return pos;
         },
+        pointToIndex: function (canvas, tileSize, mapWidth, pos) {
+            // TODO: Refactor the 50 out
+            var col = (((canvas.width / 2) - (tileSize.width / 2) + (pos.y * 2)) - pos.x) / 2;
+            var row = ((pos.x + col) - tileSize.height) - (canvas.width / 2) + (tileSize.width / 2);
+
+            row = Math.round(row / tileSize.height);
+            col = Math.round(col / tileSize.height);
+            
+            return row * mapWidth + col;
+        },
+        indexToPos: function(mapWidth, tileSize, index) {
+            return {
+                x: (index % mapWidth) * tileSize.width,
+                y: ( index < mapWidth ? 0 : Math.floor(index / mapWidth) ) * tileSize.height
+            };
+        }
     }
 });

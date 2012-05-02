@@ -37,7 +37,9 @@ define([
               },
 
               // used during the render_loop to move enemies
-              index: null,
+              index: 0,
+              
+              life: 100,
 
               // used when the map engine is done rendering other things to move an enemy
               move: function (canvas, context, tileDimensions, row, col, tilePos, currentFrame) {

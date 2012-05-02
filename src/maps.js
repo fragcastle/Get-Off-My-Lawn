@@ -1,6 +1,6 @@
 var maps = { // should load maps from server
     levelOne: {
-        data: "GFGGGGFGGGGFGGDGGGGGGFGWW",
+        data: "DFGGGGFGGGDFGGDDDDDDGFGWW",
         spawnData: "1000010000100001000010000",
         width: 5,
         tileDimensions: {
@@ -10,6 +10,8 @@ var maps = { // should load maps from server
         treeFactor: .05,
         enemyFactor: 0.5,
         enemies: [],
+        defenses: [],
+        missiles: [],
         tiles: {
             "G": 'images/grass.png',
             "D": 'images/dirt.png',
