@@ -27,6 +27,7 @@ define(
                 currentTarget: null,
 
                 // TODO: Fix, this shouldn't be here
+                image: assetLoader.getAsset('images/defense.png'),
                 missileImage: assetLoader.getAsset('images/missile.png'),
 
                 act: function () {
@@ -35,21 +36,24 @@ define(
                     if (!this.currentTarget || this.currentTarget.life <= 0) {
                         // Try to acquire a target
                         this.currentTarget = null;
-                        
+
                         this.acquireTarget();
-                        
+
                         if (this.currentTarget) {
                             debugEngine.log('Target acquired:');
                             debugEngine.log(this.currentTarget);
 
+                            var canvas = gameEngine.getCanvas();
                             var map = mapEngine.getCurrentMap();
-                            
+                            var rowCol = util.indexToRowCol(map.width, this.index);
+
                             var missile = {
-                                index: this.index,
-                                pos: util.indexToPoint(gameEngine.getCanvas().width, map.width, map.tileDimensions, this.index),
-                                target: this.currentTarget,
+                                index: this.index
+                                , pos: util.entityRowColToPoint(canvas.width, map.tileDimensions, rowCol.row, rowCol.col, this.missileImage)
+                                , target: this.currentTarget
+                                , image: this.missileImage
                             };
-    
+
                             map.missiles.push(missile);
                         }
                     }
@@ -72,7 +76,7 @@ define(
                     // var target = mapEngine.getClosestEnemy(this.point, this.range);
                 }
             };
-        
+
         return {
             new: newDefense
             }

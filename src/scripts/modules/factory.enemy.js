@@ -38,7 +38,7 @@ define([
 
               // used during the render_loop to move enemies
               index: 0,
-              
+
               life: 100,
 
               // used when the map engine is done rendering other things to move an enemy
@@ -54,7 +54,7 @@ define([
 
                     pos = { x: 0, y: 0 };
                 } else {
-                    pos = util.translatePosition(canvas, tileDimensions, row, col, this.template.size);
+                    pos = util.entityRowColToPoint(canvas.width, tileDimensions, row, col, this.template.size);
                 }
 
                 // Image, image x, image y, image width, image height, map x, map y, map width, map height
