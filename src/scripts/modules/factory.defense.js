@@ -15,8 +15,6 @@ define(
             var defense = newDefense(index);
 
             map.defenses.push(defense);
-
-            defense.act();
         });
 
         var newDefense = function (index, rateOfFire, range) {
@@ -25,24 +23,26 @@ define(
                 rateOfFire: rateOfFire || 2000,
                 range: range || 2,
                 currentTarget: null,
+                lastUpdate: Date.now(),
 
-                // TODO: Fix, this shouldn't be here
                 image: assetLoader.getAsset('images/defense.png'),
                 missileImage: assetLoader.getAsset('images/missile.png'),
 
-                act: function () {
-                    var defense = this;
+                update: function () {
+                    var now = Date.now();
+                    var delta = now - this.lastUpdate;
 
-                    if (!this.currentTarget || this.currentTarget.life <= 0) {
-                        // Try to acquire a target
-                        this.currentTarget = null;
+                    if (delta >= this.rateOfFire) {
+                        this.lastUpdate = now;
 
-                        this.acquireTarget();
+                        if (!this.currentTarget || this.currentTarget.life <= 0) {
+                            // Try to acquire a target
+                            this.currentTarget = null;
+
+                            this.acquireTarget();
+                        }
 
                         if (this.currentTarget) {
-                            debugEngine.log('Target acquired:');
-                            debugEngine.log(this.currentTarget);
-
                             var canvas = gameEngine.getCanvas();
                             var map = mapEngine.getCurrentMap();
                             var rowCol = util.indexToRowCol(map.width, this.index);
@@ -52,18 +52,35 @@ define(
                                 , pos: util.entityRowColToPoint(canvas.width, map.tileDimensions, rowCol.row, rowCol.col, this.missileImage)
                                 , target: this.currentTarget
                                 , image: this.missileImage
+                                , lastUpdate: Date.now()
+                                , update: function () {
+                                    var delta = Date.now() - this.lastUpdate;
+                                    var targetPos = util.indexToPoint(canvas.width, map.width, map.tileDimensions, this.target.index);
+
+                                    if (targetPos.x > this.pos.x)
+                                        this.pos.x += 1;
+                                    else if (targetPos.x < this.pos.x)
+                                        this.pos.x -= 1;
+
+                                    if (targetPos.y > this.pos.y)
+                                        this.pos.y += 1;
+                                    else if (targetPos.y < this.pos.y)
+                                        this.pos.y -= 1;
+
+                                    //Math.pow(targetPos.x - pos.x, 2) + Math.pow(targetPos.y - pos.y, 2)
+                                }
                             };
 
                             map.missiles.push(missile);
                         }
                     }
 
-                    if (this.currentTarget && this.currentTarget.life > 0) {
-                        setTimeout(function () { defense.act(defense) }, this.rateOfFire);
-                    } else {
-                        // No target acquired, try again
-                        setTimeout(function () {defense.act(defense) }, 500);
-                    }
+                        //if (this.currentTarget && this.currentTarget.life > 0) {
+                        //    setTimeout(function () { defense.update(defense) }, this.rateOfFire);
+                        //} else {
+                        //    // No target acquired, try again
+                        //    setTimeout(function () {defense.update(defense) }, 500);
+                        //}
                 },
 
                 acquireTarget: function () {

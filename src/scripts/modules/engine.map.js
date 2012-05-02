@@ -123,7 +123,10 @@ define(
 
                     for (var i = defenses.length - 1; i > -1; i--) {
                         if (defenses[i].index === index) {
-                            var defenseImage = defenses[i].image;
+                            var defense = defenses[i];
+                            defense.update();
+
+                            var defenseImage = defense.image;
                             var pos = util.entityRowColToPoint(canvas.width, _currentMap.tileDimensions, row, col, defenseImage);
                             context.drawImage(defenseImage, pos.x, pos.y, defenseImage.width, defenseImage.height);
                         }
@@ -133,8 +136,11 @@ define(
 
                     for (var i = missiles.length - 1; i > -1; i--) {
                         if (missiles[i].index === index) {
-                            var missileImage = missiles[i].image;
-                            context.drawImage(missileImage, missiles[i].pos.x, missiles[i].pos.y, missileImage.width, missileImage.height);
+                            var missile = missiles[i];
+                            missile.update();
+
+                            var missileImage = missile.image;
+                            context.drawImage(missileImage, missile.pos.x, missile.pos.y, missileImage.width, missileImage.height);
                         }
                     }
                 });
