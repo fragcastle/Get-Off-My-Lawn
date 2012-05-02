@@ -59,11 +59,23 @@ define(function() {
             
             return row * mapWidth + col;
         },
-        indexToPos: function(mapWidth, tileSize, index) {
-            return {
-                x: (index % mapWidth) * tileSize.width,
-                y: ( index < mapWidth ? 0 : Math.floor(index / mapWidth) ) * tileSize.height
+        rowColToIndex: function(row, col) {
+            return (row * _currentMap.width + col);
+        },
+        rowColToPoint: function (canvasWidth, tileSize, row, col) {
+            var point = {
+                x: ((row - col) * tileSize.height) + Math.floor((canvasWidth / 2) - (tileSize.width / 2)),
+                y: Math.floor( (row + col) * (tileSize.height / 2) )
             };
-        }
+            
+            return point;
+        },
+        indexToRowCol: function (mapWidth, index) {
+            return { row: Math.floor(index / mapWidth), col: index % mapWidth };
+        },
+        indexToPoint: function(canvasWidth, mapWidth, tileSize, index) {
+            var rowCol = this.indexToRowCol(mapWidth, index);
+            return this.rowColToPoint(canvasWidth, tileSize, rowCol.row, rowCol.col);
+        },
     }
 });

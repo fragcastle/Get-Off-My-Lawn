@@ -46,7 +46,7 @@ define(
                             
                             var missile = {
                                 index: this.index,
-                                pos: util.indexToPos(map.width, map.tileDimensions, this.index),
+                                pos: util.indexToPoint(gameEngine.getCanvas().width, map.width, map.tileDimensions, this.index),
                                 target: this.currentTarget,
                             };
     
