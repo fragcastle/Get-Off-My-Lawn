@@ -53,9 +53,34 @@ define(
                                 , target: this.currentTarget
                                 , image: this.missileImage
                                 , lastUpdate: Date.now()
+                                , die: function () {
+                                    for (var i = map.missiles.length - 1; i > -1; i--) {
+                                        if(map.missiles[i] == this) {
+                                            map.missiles.remove(i);
+                                            break;
+                                        }
+                                    }
+                                }
                                 , update: function () {
                                     var delta = Date.now() - this.lastUpdate;
                                     var targetPos = util.indexToPoint(canvas.width, map.width, map.tileDimensions, this.target.index);
+
+                                    if (targetPos.x === this.pos.x && targetPos.y === this.pos.y ) {
+                                        this.target.life -= 15;
+
+                                        if (this.target.life <= 0) {
+                                            for (var i = map.enemies.length - 1; i > -1; i--) {
+                                                if (map.enemies[i] == this.target) {
+                                                    map.enemies.remove(i);
+                                                    break;
+                                                }
+                                            }
+                                        }
+
+                                        this.die();
+
+                                        return;
+                                    }
 
                                     if (targetPos.x > this.pos.x)
                                         this.pos.x += 1;
