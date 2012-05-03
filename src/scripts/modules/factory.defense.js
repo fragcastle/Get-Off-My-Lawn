@@ -88,8 +88,6 @@ define(
 
                                         return;
                                     }
-
-                                    this.rotation = util.deltaToAngle(targetPos.x - this.pos.x, targetPos.y - this.pos.y);
                                     
                                     // Yay math:
                                     // soh cah toa
@@ -102,6 +100,16 @@ define(
                                     this.pos.y += Math.sin(this.rotation) * distance;
                                     
                                     this.lastFrame = Date.now();
+                                    
+
+                                    var newRotation = util.deltaToAngle(targetPos.x - this.pos.x, targetPos.y - this.pos.y);
+                                    
+                                    if (newRotation > this.rotation + 1)
+                                       newRotation = this.rotation + 1;
+                                    else if (newRotation < this.rotation - 1)
+                                       newRotation = this.rotation - 1;
+                                    
+                                    this.rotation = newRotation;
                                 }
                             };
 
