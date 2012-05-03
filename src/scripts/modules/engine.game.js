@@ -67,6 +67,7 @@ define(
         }
 
         eventEngine.pub('renderLoop');
+        eventEngine.pub('renderLoopPost');
     }
 
     var gameLoop = function () {
@@ -91,6 +92,7 @@ define(
         events: {
             MOUSE_DOWN: 'mouseDown',
             RENDER_LOOP: 'renderLoop',
+            RENDER_LOOP_POST: 'renderLoopPost',
             GAME_LOOP: 'gameLoop',
             RESIZE: 'resize',
             MOUSE_MOVE: 'mouseMove',

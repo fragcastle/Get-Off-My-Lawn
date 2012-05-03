@@ -12,10 +12,10 @@ define(
             var map = mapEngine.getCurrentMap();
             var index = util.pointToIndex(canvas, map.tileDimensions, map.width, { x: e.offsetX, y: e.offsetY });
 
-            if (mapEngine.tileTypes[map.data[index]].isBuildable) {
+            if (index < map.data.length && mapEngine.tileTypes[map.data[index]].isBuildable) {
                 var defense = newDefense(index);
-    
-                map.defenses.push(defense);   
+
+                map.defenses.push(defense);
             }
         });
 
@@ -52,7 +52,8 @@ define(
                             var missile = {
                                 index: this.index
                                 , rotation: 0
-                                , speed: 50
+                                , turningRadius: 3
+                                , speed: 100
                                 , damage: 15
                                 , pos: util.entityRowColToPoint(canvas.width, map.tileDimensions, rowCol.row, rowCol.col, this.missileImage)
                                 , target: this.currentTarget
@@ -68,8 +69,9 @@ define(
                                     }
                                 }
                                 , update: function () {
-                                    var delta = Date.now() - this.lastUpdate;
-                                    var deltaSeconds = (Date.now() - this.lastFrame) / 1000;
+                                    var now = Date.now();
+                                    var delta = now - this.lastUpdate;
+                                    var deltaSeconds = (now - this.lastFrame) / 1000;
                                     var targetPos = util.indexToPoint(canvas.width, map.width, map.tileDimensions, this.target.index);
 
                                     if (Math.abs(Math.abs(targetPos.x) - Math.abs(this.pos.x)) < 10 && Math.abs(Math.abs(targetPos.y) - Math.abs(this.pos.y)) < 10) {
@@ -88,28 +90,39 @@ define(
 
                                         return;
                                     }
-                                    
+
+                                    var xDelta = targetPos.x - this.pos.x;
+                                    var yDelta = targetPos.y - this.pos.y;
+
+                                    var newRotation = util.deltaToAngle(xDelta, yDelta);
+
+                                    if (targetPos.x <= this.pos.x && targetPos.y <= this.pos.y) {
+                                        // Turn left
+                                        newRotation += 180;
+                                    } else if (targetPos.x <= this.pos.x) {
+                                        // Turn right
+                                        newRotation -= 180;
+                                    }
+
+                                    // Limit turning radius
+                                    if (newRotation > this.rotation + this.turningRadius)
+                                       newRotation = this.rotation + this.turningRadius;
+                                    else if (newRotation < this.rotation - this.turningRadius)
+                                       newRotation = this.rotation - this.turningRadius;
+
+                                    this.rotation = newRotation;
+
                                     // Yay math:
                                     // soh cah toa
                                     // sin = opposite over hypotenuse
                                     // cos = adjacent over hypotenuse
                                     // tan = opposite over adjacent
                                     var distance = deltaSeconds * this.speed;
-                                    
-                                    this.pos.x += Math.cos(this.rotation) * distance;
-                                    this.pos.y += Math.sin(this.rotation) * distance;
-                                    
-                                    this.lastFrame = Date.now();
-                                    
 
-                                    var newRotation = util.deltaToAngle(targetPos.x - this.pos.x, targetPos.y - this.pos.y);
-                                    
-                                    if (newRotation > this.rotation + 1)
-                                       newRotation = this.rotation + 1;
-                                    else if (newRotation < this.rotation - 1)
-                                       newRotation = this.rotation - 1;
-                                    
-                                    this.rotation = newRotation;
+                                    this.pos.x += Math.cos(this.rotation * Math.PI / 180) * distance;
+                                    this.pos.y += Math.sin(this.rotation * Math.PI / 180) * distance;
+
+                                    this.lastFrame = now;
                                 }
                             };
 

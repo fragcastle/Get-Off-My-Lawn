@@ -1,7 +1,7 @@
 define([
       'modules/loader.assets',
       'modules/engine.util',
-      'http://localhost:8000/enemies.json?callback=define',
+      '/enemies.json?callback=define',
       'modules/engine.debug'
     ],
     function(assetLoader, util, enemiesJson, debugEngine){

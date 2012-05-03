@@ -58,6 +58,10 @@ require(
                 eventEngine.sub(gameEngine.events.RENDER_LOOP, function (e) {
                     mapEngine.renderTo(gameEngine.getCanvas(), gameEngine.getContext());
                 });
+
+                eventEngine.sub(gameEngine.events.RENDER_LOOP_POST, function (e) {
+                    mapEngine.renderMissilesTo(gameEngine.getCanvas(), gameEngine.getContext());
+                });
             });
 
             eventEngine.sub(assetLoader.events.ASSET_LOAD, function(itemCount) {

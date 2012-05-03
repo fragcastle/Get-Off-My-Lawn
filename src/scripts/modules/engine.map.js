@@ -5,7 +5,7 @@ define(
         'modules/engine.util',
         'modules/loader.assets',
         'modules/engine.debug',
-        'http://localhost:8000/maps.json?callback=define',
+        '/maps.json?callback=define',
         'modules/factory.enemy'
     ],
     function (eventEngine, gameEngine, util, assetLoader, debugEngine, mapSet, enemyFactory) {
@@ -131,26 +131,41 @@ define(
                             context.drawImage(defenseImage, pos.x, pos.y, defenseImage.width, defenseImage.height);
                         }
                     }
-
-                    var missiles = _currentMap.missiles;
-
-                    for (var i = missiles.length - 1; i > -1; i--) {
-                        if (missiles[i].index === index) {
-                            var missile = missiles[i];
-                            missile.update();
-
-                            var missileImage = missile.image;
-                            
-                            context.save();
-                            context.translate(missile.pos.x, missile.pos.y);
-                            context.rotate(missile.rotation * Math.PI / 180);
-                            context.drawImage(missileImage, 0, 0, missileImage.width, missileImage.height);
-                            context.restore();
-                        }
-                    }
                 });
 
                 context.restore();
+            },
+            renderMissilesTo: function (canvas, context) {
+                var missiles = _currentMap.missiles;
+
+                for (var i = missiles.length - 1; i > -1; i--) {
+                    var missile = missiles[i];
+                    var missileImage = missile.image;
+
+                    if (i === 0) {
+                        if(!_currentMap.debugTracePoints) {
+                            _currentMap.debugTracePoints = [];
+                        }
+
+                        _currentMap.debugTracePoints.push({ x: missile.pos.x, y: missile.pos.y });
+                    }
+
+                    missile.update();
+
+                    context.save();
+                    context.translate(missile.pos.x, missile.pos.y);
+                    context.rotate(missile.rotation * Math.PI / 180);
+                    context.translate( - missileImage.width, - (missileImage.height / 2))
+                    context.drawImage(missileImage, 0, 0, missileImage.width, missileImage.height);
+                    context.restore();
+                }
+
+                if(_currentMap.debugTracePoints) {
+                    for (var i = _currentMap.debugTracePoints.length - 1; i > -1; i--) {
+                        var tracePoint = _currentMap.debugTracePoints[i];
+                        //context.fillRect(tracePoint.x, tracePoint.y, 1, 1);
+                    }
+                }
             },
             tileTypes: {
                 'G': {

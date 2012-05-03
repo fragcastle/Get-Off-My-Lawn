@@ -35,7 +35,6 @@ app.configure( function() {
   console.log((new Date()).toString());
 });
 
-
 app.get(config.routes.index, function(req, res) {
   res.render('index.jade', {
     title: 'Get Off My Lawn',
