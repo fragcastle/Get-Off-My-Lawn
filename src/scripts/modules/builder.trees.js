@@ -17,13 +17,18 @@ require(
 
         function randomNumbers(limit) {
             var nums = [];
-            for( var i = -1, l = mapEngine.getCurrentMap().data.length; ++i < l; ) {
-                var rnd = Math.floor(Math.random()*100000001);
-                if( rnd%3 === 0 ) {
-                    nums.push(i);
-                }
-                if (nums.length === limit) {
-                    break;
+            var map = mapEngine.getCurrentMap();
+            
+            for (var i = -1, l = mapEngine.getCurrentMap().data.length; ++i < l;) {
+                if (mapEngine.tileTypes[map.data[i]].isBuildable) {
+                    var rnd = Math.floor(Math.random() * 100000001);
+                    
+                    if (rnd % 3 === 0 ) {
+                        nums.push(i);
+                    }
+                    if (nums.length === limit) {
+                        break;
+                    }
                 }
             }
             return nums;
@@ -46,7 +51,7 @@ require(
             var map = mapEngine.getCurrentMap();
 
             if (inArray(_treePositions, index)) {
-                var pos = util.entityRowColToPoint(canvas.width, map.tileDimensions, row, col, _tree);
+                var pos = util.entityRowColToPoint(canvas.width, map.tileDimensions, row, col, _tree, true);
                 context.drawImage(_tree, pos.x, pos.y, _tree.width, _tree.height);
             }
         });

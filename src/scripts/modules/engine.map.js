@@ -140,7 +140,12 @@ define(
                             missile.update();
 
                             var missileImage = missile.image;
-                            context.drawImage(missileImage, missile.pos.x, missile.pos.y, missileImage.width, missileImage.height);
+                            
+                            context.save();
+                            context.translate(missile.pos.x, missile.pos.y);
+                            context.rotate(missile.rotation * Math.PI / 180);
+                            context.drawImage(missileImage, 0, 0, missileImage.width, missileImage.height);
+                            context.restore();
                         }
                     }
                 });
@@ -165,7 +170,7 @@ define(
                     isWalkable: true
                 },
                 'F': {
-                    isBuildable: true,
+                    isBuildable: false,
                     isWalkable: false
                 }
             },

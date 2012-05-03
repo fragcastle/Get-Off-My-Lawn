@@ -87,5 +87,24 @@ define(function() {
             var rowCol = this.indexToRowCol(mapWidth, index);
             return this.rowColToPoint(canvasWidth, tileSize, rowCol.row, rowCol.col);
         },
+        pointsToSlope: function (pointA, pointB) {
+            var angle = deltaToAngle(pointB.x - pointA.x, pointB.y - pointA.y);
+    
+            var slope = {
+                run: Math.cos(angle * Math.PI / 180),
+                rise: Math.sin(angle * Math.PI / 180)
+            };
+            
+            if (pointA.x > pointB.x)
+                slope.run *= -1;
+    
+            if (pointA.x > pointB.x)
+                slope.rise *= -1;
+    
+            return slope;
+        },
+        deltaToAngle: function (xDelta, yDelta) {
+            return Math.atan(yDelta / xDelta) * 180 / Math.PI;
+        }
     }
 });
