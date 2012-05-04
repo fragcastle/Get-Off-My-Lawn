@@ -96,11 +96,19 @@ define(
 
                                     var newRotation = util.deltaToAngle(xDelta, yDelta);
 
+                                    if (Math.abs(newRotation - this.rotation) > 180) {
+                                        if (newRotation > 0) {
+                                            newRotation -= 360;
+                                        } else {
+                                            newRotation += 360;
+                                        }
+                                    }
+                                    
                                     if (targetPos.x <= this.pos.x && targetPos.y <= this.pos.y) {
-                                        // Turn left
+                                        // Turn right
                                         newRotation += 180;
                                     } else if (targetPos.x <= this.pos.x) {
-                                        // Turn right
+                                        // Turn left
                                         newRotation -= 180;
                                     }
 
