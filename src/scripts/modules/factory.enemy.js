@@ -1,8 +1,9 @@
-define([
-      'modules/loader.assets',
-      'modules/engine.util',
-      '/enemies.json?callback=define',
-      'modules/engine.debug'
+define(
+    [
+    'modules/loader.assets'
+    , 'modules/engine.util'
+    , '/enemies.json?callback=define'
+    , 'modules/engine.debug'
     ],
     function(assetLoader, util, enemiesJson, debugEngine){
       var keyFrames = {
@@ -26,8 +27,9 @@ define([
 
       return {
         enemies: enemiesJson.enemies,
-        new: function(templateName) {
+        new: function(templateName, index) {
           var template = enemyTemplates[templateName];
+
           return {
               template: template,
               frame: util.random(template.keyFrames),
@@ -37,7 +39,7 @@ define([
               },
 
               // used during the render_loop to move enemies
-              index: 0,
+              index: index,
 
               life: 100,
 

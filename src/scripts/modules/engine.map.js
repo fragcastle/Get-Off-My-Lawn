@@ -1,12 +1,12 @@
 define(
     [
-        'modules/engine.events',
-        'modules/engine.game',
-        'modules/engine.util',
-        'modules/loader.assets',
-        'modules/engine.debug',
-        '/maps.json?callback=define',
-        'modules/factory.enemy'
+    'modules/engine.events'
+    , 'modules/engine.game'
+    , 'modules/engine.util'
+    , 'modules/loader.assets'
+    , 'modules/engine.debug'
+    , '/maps.json?callback=define'
+    , 'modules/factory.enemy'
     ],
     function (eventEngine, gameEngine, util, assetLoader, debugEngine, mapSet, enemyFactory) {
         var maps = mapSet
@@ -34,30 +34,49 @@ define(
             setCurrentLevel: function(name) {
                 debugEngine.log('Loading level...');
                 _currentMap = maps[name] || _currentMap;
+                _currentWave = 0;
 
+                this.addEnemies();
+
+                debugEngine.log('Done loading level.');
+                eventEngine.pub(this.events.LEVEL_LOADED);
+                return this; // for chaining
+            },
+            nextWave: function () {
+                _currentWave++;
+                this.addEnemies();
+            },
+            addEnemies: function () {
                 var spawnData = _currentMap.spawnData;
                     length = enemyFactory.enemies.length,
                     enemyTemplates = enemyFactory.enemies,
                     enemies = _currentMap.enemies,
                     mapSize = _currentMap.width * _currentMap.width;
 
-                for (var i = 0; i < mapSize; i++) {
-                    if (spawnData[i] > 0 && util.propability(_currentMap.enemyFactor)) {
-                        var enemyIndex = Math.floor(Math.random() * length);
-                        var enemyTemplate = enemyFactory.enemies[enemyIndex];
+                for (var i = _currentMap.waves[_currentWave] - 1; i > -1; i--) {
+                    var enemyIndex = Math.floor(Math.random() * length);
+                    var enemyTemplate = enemyFactory.enemies[enemyIndex];
 
-                        // load the asset into the template
-                        enemyTemplates[enemyIndex].image = assetLoader.getAsset(enemyTemplates[enemyIndex].imagePath);
+                    // load the asset into the template
+                    enemyTemplates[enemyIndex].image = assetLoader.getAsset(enemyTemplates[enemyIndex].imagePath);
 
-                        var enemy = enemyFactory.new(enemyTemplate.name);
+                    var enemy = enemyFactory.new(enemyTemplate.name, util.random(_currentMap.spawnData));
 
-                        enemies.push(enemy);
-                    }
+                    enemies.push(enemy);
                 }
-
-                debugEngine.log('Done loading level.');
-                eventEngine.pub(this.events.LEVEL_LOADED);
-                return this; // for chaining
+                //for (var i = 0; i < mapSize; i++) {
+                //    if (util.random(spawnData)[i] > 0 && util.propability(_currentMap.enemyFactor)) {
+                //        var enemyIndex = Math.floor(Math.random() * length);
+                //        var enemyTemplate = enemyFactory.enemies[enemyIndex];
+                //
+                //        // load the asset into the template
+                //        enemyTemplates[enemyIndex].image = assetLoader.getAsset(enemyTemplates[enemyIndex].imagePath);
+                //
+                //        var enemy = enemyFactory.new(enemyTemplate.name);
+                //
+                //        enemies.push(enemy);
+                //    }
+                //}
             },
             getEligibleMoves: function (index) {
                 var moves = [];
@@ -97,6 +116,10 @@ define(
                 context.clearRect (0, 0, canvas.width, canvas.height);
                 context.save();
                 context.translate(0, mapOffset);
+
+                if (_currentMap.enemies.length === 0) {
+                    this.nextWave();
+                }
 
                 this.tileLoop(function(row, col, index) {
                     var img       = this.getTileImage(index)
