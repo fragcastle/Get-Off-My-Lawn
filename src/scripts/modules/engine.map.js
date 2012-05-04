@@ -64,19 +64,6 @@ define(
 
                     enemies.push(enemy);
                 }
-                //for (var i = 0; i < mapSize; i++) {
-                //    if (util.random(spawnData)[i] > 0 && util.propability(_currentMap.enemyFactor)) {
-                //        var enemyIndex = Math.floor(Math.random() * length);
-                //        var enemyTemplate = enemyFactory.enemies[enemyIndex];
-                //
-                //        // load the asset into the template
-                //        enemyTemplates[enemyIndex].image = assetLoader.getAsset(enemyTemplates[enemyIndex].imagePath);
-                //
-                //        var enemy = enemyFactory.new(enemyTemplate.name);
-                //
-                //        enemies.push(enemy);
-                //    }
-                //}
             },
             getEligibleMoves: function (index) {
                 var moves = [];
