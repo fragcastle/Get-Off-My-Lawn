@@ -72,8 +72,10 @@ define(
                                     var now = Date.now();
                                     var delta = now - this.lastUpdate;
                                     var deltaSeconds = (now - this.lastFrame) / 1000;
-                                    var targetPos = util.indexToPoint(canvas.width, map.width, map.tileDimensions, this.target.index);
-
+                                    var rowCol = util.indexToRowCol(map.width, this.target.index);
+                                    console.log(this.target.template.size);
+                                    var targetPos = util.entityRowColToCenterPoint(canvas.width, map.tileDimensions, rowCol.row, rowCol.col, this.target.template.size);
+                                    
                                     if (Math.abs(Math.abs(targetPos.x) - Math.abs(this.pos.x)) < 10 && Math.abs(Math.abs(targetPos.y) - Math.abs(this.pos.y)) < 10) {
                                         this.target.life -= this.damage;
 

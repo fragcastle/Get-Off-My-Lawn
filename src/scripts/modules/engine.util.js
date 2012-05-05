@@ -80,6 +80,24 @@ define(function() {
 
             return pos;
         },
+        entityRowColToCenterPoint: function(canvasWidth, tileSize, row, col, entity) {
+            var pos = {
+                x: ((row - col) * tileSize.height) + Math.floor((canvasWidth / 2) - (tileSize.width / 2)),
+                y: Math.floor( (row + col) * (tileSize.height / 2) )
+            };
+
+            if (entity) {
+                if (entity.width != tileSize.width) {
+                    pos.x += tileSize.width / 2;
+                }
+
+                if (entity.height != tileSize.height) {
+                    pos.y += tileSize.height - entity.height / 2;
+                }
+            }
+
+            return pos;
+        },
         indexToRowCol: function (mapWidth, index) {
             return { row: Math.floor(index / mapWidth), col: index % mapWidth };
         },
