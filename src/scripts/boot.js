@@ -53,7 +53,7 @@ require(
             // don't render until all the assets have been loaded
             eventEngine.sub(assetLoader.events.ALL_ASSETS_LOADED, function(e) {
                 $('#loaderProgress').hide();
-                mapEngine.setCurrentLevel('levelOne');
+                mapEngine.setCurrentLevel(0);
 
                 eventEngine.sub(gameEngine.events.RENDER_LOOP, function (e) {
                     mapEngine.renderTo(gameEngine.getCanvas(), gameEngine.getContext());

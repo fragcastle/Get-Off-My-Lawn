@@ -1,5 +1,7 @@
-var maps = { // should load maps from server
-    levelOne: {
+// should load maps from server
+var maps = {
+    data: [
+    {
         data: "DFGGGGFGGGDFGGDDDDDDGFGWW",
         spawnData: [0, 5, 10, 15, 20],
         waves: [1, 2, 3, 4, 5, 6],
@@ -36,7 +38,7 @@ var maps = { // should load maps from server
         behavior: {
         }
     },
-    levelTwo: {
+    {
         data: "GGGGGGGGGGGGGGDGGGGGGGGGW",
         spawnData: [0, 5, 10, 15, 20],
         waves: [1, 2, 3, 4, 5, 6],
@@ -72,7 +74,8 @@ var maps = { // should load maps from server
         },
         behavior: {
         }
-    }
-}
+    }]
+};
+
 
 module.exports = maps;

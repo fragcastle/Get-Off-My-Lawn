@@ -11,8 +11,11 @@ define(
     function (eventEngine, gameEngine, util, assetLoader, debugEngine, mapSet, enemyFactory) {
         var maps = mapSet
             , _currentMap = null
+            , _currentMapIndex = 0
+            , _currentWave = 0
             , missileImage = null
-            , mapOffset = 0;
+            , mapOffset = 0
+            , _animate = true;
 
         return {
             _getElligibleEvents: function() {
@@ -31,20 +34,44 @@ define(
             getCurrentMap: function() {
                 return _currentMap;
             },
-            setCurrentLevel: function(name) {
+            setCurrentLevel: function(index) {
                 debugEngine.log('Loading level...');
-                _currentMap = maps[name] || _currentMap;
+                _currentMap = maps.data[index] || _currentMap;
+                _currentMapIndex = index;
                 _currentWave = 0;
-
-                this.addEnemies();
-
+                
                 debugEngine.log('Done loading level.');
                 eventEngine.pub(this.events.LEVEL_LOADED);
+                
+                _animate = false;
+                
+                setTimeout(function (that) {
+                    that.startLevel();
+                }, 5000, this);
+                
                 return this; // for chaining
             },
             nextWave: function () {
-                _currentWave++;
+                if (_currentWave > _currentMap.waves.length) {
+                    this.setCurrentLevel(_currentMapIndex++);
+                } else {
+                    _currentWave++;
+                    _animate = false;
+                    
+                    setTimeout(function (that) {
+                        that.startWave();
+                    }, 2000, this);
+                }
+            },
+            startLevel: function () {
                 this.addEnemies();
+                
+                _animate = true;
+            },
+            startWave: function () {
+                this.addEnemies();
+                
+                _animate = true;
             },
             addEnemies: function () {
                 var spawnData = _currentMap.spawnData;
@@ -104,7 +131,7 @@ define(
                 context.save();
                 context.translate(0, mapOffset);
 
-                if (_currentMap.enemies.length === 0) {
+                if (_animate && _currentMap.enemies.length === 0) {
                     this.nextWave();
                 }
 
@@ -134,7 +161,10 @@ define(
                     for (var i = defenses.length - 1; i > -1; i--) {
                         if (defenses[i].index === index) {
                             var defense = defenses[i];
-                            defense.update();
+                            
+                            if (_animate) {
+                                defense.update();
+                            }
 
                             var defenseImage = defense.image;
                             var pos = util.entityRowColToPoint(canvas.width, _currentMap.tileDimensions, row, col, defenseImage);
