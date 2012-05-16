@@ -93,8 +93,9 @@ define(
                             var tileType = map.data[potentialMove];
           
                             if (mapEngine.tileTypes[tileType].isWalkable) {
+                                console.log(this.targetIndex + ' to ' + potentialMove)
                                 this.index = this.targetIndex;
-                                this.index = potentialMove;
+                                this.targetIndex = potentialMove;
                             }
                         }
                     }
