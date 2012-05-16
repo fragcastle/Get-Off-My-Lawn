@@ -152,7 +152,9 @@ define(
                     for (var i = enemies.length - 1; i > -1; i--) {
                         if (enemies[i].index === index) {
                             var enemy = enemies[i];
-                            enemy.move(canvas, context, _currentMap.tileDimensions, row, col, tilePos, gameEngine.getCurrentFrame());
+                            enemy.update(this);
+                            
+                            enemy.draw(canvas, context, _currentMap.tileDimensions, row, col, tilePos, gameEngine.getCurrentFrame());
                         }
                     }
 

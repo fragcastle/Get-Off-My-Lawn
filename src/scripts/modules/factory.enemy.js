@@ -31,20 +31,26 @@ define(
           var template = enemyTemplates[templateName];
 
           return {
+              index: index,
+              movingToIndex: index,
+              position: { x: 0, y: 0 },
+              
+              lastUpdate: Date.now(),
+              
+              rateOfMovement: 2000,
+              
               template: template,
               frame: util.random(template.keyFrames),
               orientation: util.coinFlip() ? 0 : 1,
+
+              life: 100,
+              
               setFrame: function(frameName) {
                   this.frame = this.template.keyFrames[frameName];
               },
 
-              // used during the render_loop to move enemies
-              index: index,
-
-              life: 100,
-
               // used when the map engine is done rendering other things to move an enemy
-              move: function (canvas, context, tileDimensions, row, col, tilePos, currentFrame) {
+              draw: function (canvas, context, tileDimensions, row, col, tilePos, currentFrame) {
                 var actionFrame = this.template.keyFrames[ this.frame ];
 
                 var frameChange = currentFrame * this.template.size.width;
@@ -65,7 +71,25 @@ define(
                 if (this.orientation === orientations.left) {
                     context.restore();
                 }
-            }
+              },
+                  
+              update: function (mapEngine) {
+                var now = Date.now();
+                var delta = now - this.lastUpdate;
+
+                if (delta >= this.rateOfMovement) {
+                  this.lastUpdate = now;
+
+                  var map = mapEngine.getCurrentMap();
+                  var potentialMove = util.random(mapEngine.getEligibleMoves(this.index));
+                  var tileType = map.data[potentialMove];
+
+                  if (mapEngine.tileTypes[tileType].isWalkable) {
+                      this.index = this.movingToIndex;
+                      this.index = potentialMove;
+                  }
+                }
+              }
           }
         }
       }

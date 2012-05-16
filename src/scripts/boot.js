@@ -21,7 +21,6 @@ require(
     , 'modules/factory.defense'
     , 'modules/builder.home'
     , 'modules/builder.trees'
-    , 'modules/engine.enemy' // doesn't create an object it just sets up event listeners
     ],
     function($, mapEngine, eventEngine, configEngine, assetLoader, gameEngine, util, debugEngine, enemyFactory, defenseFactory) {
         configEngine.set('shouldDebug', true);
