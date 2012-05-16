@@ -123,6 +123,15 @@ define(function() {
         },
         deltaToAngle: function (xDelta, yDelta) {
             return Math.atan(yDelta / xDelta) * 180 / Math.PI;
+        },
+        centerPoint: function (pointA, pointB, percentTraveled) {
+            var xDelta = pointB.x - pointA.x;
+            var yDelta = pointB.y - pointA.y;
+            
+            return {
+                x: pointA.x + xDelta * percentTraveled,
+                y: pointA.y + yDelta * percentTraveled
+            };
         }
     }
 });

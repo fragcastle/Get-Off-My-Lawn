@@ -33,7 +33,7 @@ define(
       
                 return {
                     index: index,
-                    movingToIndex: index,
+                    targetIndex: index,
                     position: { x: 0, y: 0 },
                     
                     lastUpdate: Date.now(),
@@ -51,23 +51,30 @@ define(
                     },
       
                     // used when the map engine is done rendering other things to move an enemy
-                    draw: function (canvas, context, tileDimensions, row, col, tilePos, currentFrame) {
+                    draw: function (canvas, context, map, tileDimensions, currentFrame) {
+                        var now = Date.now();
+                        var delta = now - this.lastUpdate;
+                        
                         var actionFrame = this.template.keyFrames[ this.frame ];
-        
                         var frameChange = currentFrame * this.template.size.width;
-        
-                        if (this.orientation === orientations.left) {
-                            context.save();
-                            context.translate(tilePos.x + 80, tilePos.y - 40);
-                            context.scale(-1, 1);
-        
-                            pos = { x: 0, y: 0 };
-                        } else {
-                            pos = util.entityRowColToPoint(canvas.width, tileDimensions, row, col, this.template.size);
-                        }
+                        
+                        var percentOfDistanceTraveled = delta / this.rateOfMovement;
+                        startPoint = util.indexToPoint(canvas.width, map.width, tileDimensions, this.index);
+                        endPoint = util.indexToPoint(canvas.width, map.width, tileDimensions, this.targetIndex);
+                        point = util.centerPoint(startPoint, endPoint, percentOfDistanceTraveled);
+                        
+                        //if (this.orientation === orientations.left) {
+                        //    context.save();
+                        //    context.translate(tilePos.x + 80, tilePos.y - 40);
+                        //    context.scale(-1, 1);
+                        //
+                        //    pos = { x: 0, y: 0 };
+                        //} else {
+                        //    pos = util.entityRowColToPoint(canvas.width, tileDimensions, row, col, this.template.size);
+                        //}
         
                         // Image, image x, image y, image width, image height, map x, map y, map width, map height
-                        context.drawImage(this.template.image, actionFrame.x + frameChange, actionFrame.y, this.template.size.width, this.template.size.height, pos.x, pos.y, this.template.size.width, this.template.size.height);
+                        context.drawImage(this.template.image, actionFrame.x + frameChange, actionFrame.y, this.template.size.width, this.template.size.height, point.x, point.y, this.template.size.width, this.template.size.height);
         
                         if (this.orientation === orientations.left) {
                             context.restore();
@@ -86,7 +93,7 @@ define(
                             var tileType = map.data[potentialMove];
           
                             if (mapEngine.tileTypes[tileType].isWalkable) {
-                                this.index = this.movingToIndex;
+                                this.index = this.targetIndex;
                                 this.index = potentialMove;
                             }
                         }

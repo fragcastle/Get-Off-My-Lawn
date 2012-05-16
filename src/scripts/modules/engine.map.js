@@ -154,7 +154,7 @@ define(
                             var enemy = enemies[i];
                             enemy.update(this);
                             
-                            enemy.draw(canvas, context, _currentMap.tileDimensions, row, col, tilePos, gameEngine.getCurrentFrame());
+                            enemy.draw(canvas, context, _currentMap, _currentMap.tileDimensions, gameEngine.getCurrentFrame());
                         }
                     }
 
