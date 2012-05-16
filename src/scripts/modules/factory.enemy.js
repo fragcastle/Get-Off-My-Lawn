@@ -89,14 +89,15 @@ define(
                             this.lastUpdate = now;
           
                             var map = mapEngine.getCurrentMap();
-                            var potentialMove = util.random(mapEngine.getEligibleMoves(this.index));
+                            var potentialMove = util.random(mapEngine.getEligibleMoves(this.targetIndex));
                             var tileType = map.data[potentialMove];
           
-                            if (mapEngine.tileTypes[tileType].isWalkable) {
-                                console.log(this.targetIndex + ' to ' + potentialMove)
-                                this.index = this.targetIndex;
-                                this.targetIndex = potentialMove;
+                            if (!mapEngine.tileTypes[tileType].isWalkable) {
+                                potentialMove = this.targetIndex;
                             }
+                            
+                            this.index = this.targetIndex;
+                            this.targetIndex = potentialMove;
                         }
                     }
                 }

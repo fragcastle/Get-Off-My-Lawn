@@ -106,6 +106,7 @@ define(
                 if (index < mapSize - mapWidth - 1)
                     moves.push(index + mapWidth);
 
+                console.log(moves);
                 return moves;
             },
             rowColToIndex: function(row, col) {
