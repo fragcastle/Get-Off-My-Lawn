@@ -26,11 +26,11 @@ define(
                 range: range || 2,
                 currentTarget: null,
                 lastUpdate: Date.now(),
-
+                
                 image: assetLoader.getAsset('images/defense.png'),
                 missileImage: assetLoader.getAsset('images/missile.png'),
 
-                update: function () {
+                update: function (mapEngine) {
                     var now = Date.now();
                     var delta = now - this.lastUpdate;
 
@@ -68,10 +68,8 @@ define(
                                         }
                                     }
                                 }
-                                , update: function () {
-                                    var now = Date.now();
-                                    var delta = now - this.lastUpdate;
-                                    var deltaSeconds = (now - this.lastFrame) / 1000;
+                                , update: function (mapEngine) {
+                                    var deltaSeconds = mapEngine.renderDelta / 1000;
                                     var rowCol = util.indexToRowCol(map.width, this.target.index);
                                     
                                     var targetPos = util.entityRowColToCenterPoint(canvas.width, map.tileDimensions, rowCol.row, rowCol.col, this.target.template.size);

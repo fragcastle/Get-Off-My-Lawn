@@ -66,6 +66,7 @@ define(
                 currentFrame = 0;
         }
 
+        eventEngine.pub('renderLoopPre');
         eventEngine.pub('renderLoop');
         eventEngine.pub('renderLoopPost');
     }
@@ -91,6 +92,7 @@ define(
         },
         events: {
             MOUSE_DOWN: 'mouseDown',
+            RENDER_LOOP_PRE: 'renderLoopPre',
             RENDER_LOOP: 'renderLoop',
             RENDER_LOOP_POST: 'renderLoopPost',
             GAME_LOOP: 'gameLoop',

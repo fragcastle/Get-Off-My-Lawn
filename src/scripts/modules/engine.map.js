@@ -15,7 +15,9 @@ define(
             , _currentWave = 0
             , missileImage = null
             , mapOffset = 0
-            , _animate = true;
+            , _animate = true
+            , lastFrameRenderTime = Date.now()
+            , lastFrameRenderTimeDelta = 0;
 
         return {
             _getElligibleEvents: function() {
@@ -106,7 +108,6 @@ define(
                 if (index < mapSize - mapWidth - 1)
                     moves.push(index + mapWidth);
 
-                console.log(moves);
                 return moves;
             },
             rowColToIndex: function(row, col) {
@@ -126,6 +127,11 @@ define(
                         fn.call(this, startPosition, col, index);
                     }
                 }
+            },
+            setupRender: function () {
+                var now = Date.now();
+                this.lastFrameRenderTimeDelta = now - this.lastFrameRenderTime;
+                this.lastFrameRenderTime = now;
             },
             renderTo: function(canvas, context) {
                 context.clearRect (0, 0, canvas.width, canvas.height);
@@ -154,7 +160,7 @@ define(
                         if (enemies[i].index === index) {
                             var enemy = enemies[i];
                             enemy.update(this);
-                            
+
                             enemy.draw(canvas, context, _currentMap, _currentMap.tileDimensions, gameEngine.getCurrentFrame());
                         }
                     }
@@ -166,7 +172,7 @@ define(
                             var defense = defenses[i];
                             
                             if (_animate) {
-                                defense.update();
+                                defense.update(this);
                             }
 
                             var defenseImage = defense.image;
@@ -193,7 +199,7 @@ define(
                         _currentMap.debugTracePoints.push({ x: missile.pos.x, y: missile.pos.y });
                     }
 
-                    missile.update();
+                    missile.update(this);
 
                     context.save();
                     context.translate(missile.pos.x, missile.pos.y);

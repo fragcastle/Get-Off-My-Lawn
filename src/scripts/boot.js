@@ -54,6 +54,10 @@ require(
                 $('#loaderProgress').hide();
                 mapEngine.setCurrentLevel(0);
 
+                eventEngine.sub(gameEngine.events.RENDER_LOOP_PRE, function (e) {
+                    mapEngine.setupRender();
+                });
+
                 eventEngine.sub(gameEngine.events.RENDER_LOOP, function (e) {
                     mapEngine.renderTo(gameEngine.getCanvas(), gameEngine.getContext());
                 });
