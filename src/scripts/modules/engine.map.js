@@ -13,6 +13,7 @@ define(
             , _currentMap = null
             , _currentMapIndex = 0
             , _currentWave = 0
+            , tileCanvas = null
             , missileImage = null
             , mapOffset = 0
             , _animate = true
@@ -46,6 +47,21 @@ define(
                 _currentMap = maps.data[index] || _currentMap;
                 _currentMapIndex = index;
                 _currentWave = 0;
+
+                var canvas = gameEngine.getCanvas();
+
+                _tileCanvas = document.createElement('canvas');
+                _tileCanvas.width = canvas.width;
+                _tileCanvas.height = canvas.height;
+
+                var tileCanvasContext = _tileCanvas.getContext('2d');
+
+                this.tileLoop(function(row, col, index) {
+                    var img       = this.getTileImage(index)
+                        , tilePos = util.rowColToPoint(canvas.width, _currentMap.tileDimensions, row, col);
+
+                    tileCanvasContext.drawImage(img, tilePos.x, tilePos.y, img.width, img.height);
+                });
 
                 debugEngine.log('Done loading level.');
                 eventEngine.pub(this.events.LEVEL_LOADED);
@@ -136,6 +152,9 @@ define(
             },
             renderTo: function(canvas, context) {
                 context.clearRect (0, 0, canvas.width, canvas.height);
+
+                context.drawImage(_tileCanvas, 0, 0);
+
                 context.save();
                 context.translate(0, mapOffset);
 
@@ -148,11 +167,8 @@ define(
                 }
 
                 this.tileLoop(function(row, col, index) {
-                    var img       = this.getTileImage(index)
-                        , tilePos = util.rowColToPoint(canvas.width, _currentMap.tileDimensions, row, col);
-
-                    context.drawImage(img, tilePos.x, tilePos.y, img.width, img.height);
-
+                    var tilePos = util.rowColToPoint(canvas.width, _currentMap.tileDimensions, row, col);
+                    
                     eventEngine.pub(this.events.TILE_RENDER, this, [index, row, col, tilePos]);
                     eventEngine.pub(this.events.BUILDING_RENDER, this, [index, row, col, tilePos]);
 
