@@ -15,7 +15,8 @@ define(
             , _currentWave = 0
             , missileImage = null
             , mapOffset = 0
-            , _animate = true;
+            , _animate = true
+            , _resumeAnimateTime = Date.now();
 
         return {
             _getElligibleEvents: function() {
@@ -34,21 +35,28 @@ define(
             getCurrentMap: function() {
                 return _currentMap;
             },
+            getAnimate: function() {
+                return _animate;
+            },
+            GetResumeAnimateTime: function () {
+                return _resumeAnimateTime;
+            },
             setCurrentLevel: function(index) {
                 debugEngine.log('Loading level...');
                 _currentMap = maps.data[index] || _currentMap;
                 _currentMapIndex = index;
                 _currentWave = 0;
-                
+
                 debugEngine.log('Done loading level.');
                 eventEngine.pub(this.events.LEVEL_LOADED);
-                
+
                 _animate = false;
-                
+                _resumeAnimateTime = Date.now() + 3000;
+
                 setTimeout(function (that) {
                     that.startLevel();
-                }, 5000, this);
-                
+                }, 3000, this);
+
                 return this; // for chaining
             },
             nextWave: function () {
@@ -57,20 +65,20 @@ define(
                 } else {
                     _currentWave++;
                     _animate = false;
-                    
+
                     setTimeout(function (that) {
                         that.startWave();
-                    }, 2000, this);
+                    }, 3000, this);
                 }
             },
             startLevel: function () {
                 this.addEnemies();
-                
+
                 _animate = true;
             },
             startWave: function () {
                 this.addEnemies();
-                
+
                 _animate = true;
             },
             addEnemies: function () {
@@ -131,6 +139,10 @@ define(
                 context.save();
                 context.translate(0, mapOffset);
 
+                if (!_animate && (_resumeAnimateTime < Date.now())) {
+                    _animate = true;
+                }
+
                 if (_animate && _currentMap.enemies.length === 0) {
                     this.nextWave();
                 }
@@ -143,9 +155,6 @@ define(
 
                     eventEngine.pub(this.events.TILE_RENDER, this, [index, row, col, tilePos]);
                     eventEngine.pub(this.events.BUILDING_RENDER, this, [index, row, col, tilePos]);
-                    eventEngine.pub(this.events.DEFENSE_RENDER, this, [index, row, col, tilePos]);
-                    eventEngine.pub(this.events.PLAYER_RENDER, this, [index, row, col, tilePos]);
-                    eventEngine.pub(this.events.EFFECT_RENDER, this, [index, row, col, tilePos]);
 
                     var enemies = _currentMap.enemies;
 
@@ -161,7 +170,7 @@ define(
                     for (var i = defenses.length - 1; i > -1; i--) {
                         if (defenses[i].index === index) {
                             var defense = defenses[i];
-                            
+
                             if (_animate) {
                                 defense.update();
                             }
@@ -171,6 +180,9 @@ define(
                             context.drawImage(defenseImage, pos.x, pos.y, defenseImage.width, defenseImage.height);
                         }
                     }
+
+                    eventEngine.pub(this.events.DEFENSE_RENDER, this, [index, row, col, tilePos]);
+                    eventEngine.pub(this.events.PLAYER_RENDER, this, [index, row, col, tilePos]);
                 });
 
                 context.restore();
@@ -200,12 +212,7 @@ define(
                     context.restore();
                 }
 
-                if(_currentMap.debugTracePoints) {
-                    for (var i = _currentMap.debugTracePoints.length - 1; i > -1; i--) {
-                        var tracePoint = _currentMap.debugTracePoints[i];
-                        //context.fillRect(tracePoint.x, tracePoint.y, 1, 1);
-                    }
-                }
+                eventEngine.pub(this.events.EFFECT_RENDER, this);
             },
             tileTypes: {
                 'G': {

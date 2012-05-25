@@ -73,9 +73,9 @@ define(
                                     var delta = now - this.lastUpdate;
                                     var deltaSeconds = (now - this.lastFrame) / 1000;
                                     var rowCol = util.indexToRowCol(map.width, this.target.index);
-                                    console.log(this.target.template.size);
-                                    var targetPos = util.entityRowColToCenterPoint(canvas.width, map.tileDimensions, rowCol.row, rowCol.col, this.target.template.size);
                                     
+                                    var targetPos = util.entityRowColToCenterPoint(canvas.width, map.tileDimensions, rowCol.row, rowCol.col, this.target.template.size);
+
                                     if (Math.abs(Math.abs(targetPos.x) - Math.abs(this.pos.x)) < 10 && Math.abs(Math.abs(targetPos.y) - Math.abs(this.pos.y)) < 10) {
                                         this.target.life -= this.damage;
 
@@ -105,7 +105,7 @@ define(
                                             newRotation += 360;
                                         }
                                     }
-                                    
+
                                     if (targetPos.x <= this.pos.x && targetPos.y <= this.pos.y) {
                                         // Turn right
                                         newRotation += 180;

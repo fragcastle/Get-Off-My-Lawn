@@ -15,6 +15,7 @@ require(
     , 'modules/engine.config'
     , 'modules/loader.assets'
     , 'modules/engine.game'
+    , 'modules/engine.ui'
     , 'modules/engine.util'
     , 'modules/engine.debug'
     , 'modules/factory.enemy'
